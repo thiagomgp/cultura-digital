@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador: Diskpart (CMD)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col">
+
+  <script>
+    const SUPABASE_URL = "https://pnybenlfazdjgqnyuypn.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_2pzNR2UAF2-jfiXQDqrA3w_lwFryik0";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const studentData = JSON.parse(sessionStorage.getItem('active_student') || '{}');
+    if (!studentData.id) {
+      window.location.href = '../index.html';
+    }
+
+    let startTime = Date.now();
+    let currentStep = 1;
+    const totalSteps = 4;
+  </script>
+
+  <!-- HEADER DA LIÇÃO -->
+  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center space-x-3">
+      <a href="../index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded transition"><i class="fa-solid fa-arrow-left mr-1"></i> Voltar ao Portal</a>
+      <h1 class="text-lg font-bold text-white">Lição 1: Preparação de Disco via CMD (Diskpart)</h1>
+    </div>
+    <div class="text-xs text-slate-400">
+      Aluno: <b class="text-cyan-400" id="headerStudentName"></b>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-6xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- PAINEL DE INSTRUÇÕES -->
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl flex flex-col justify-between space-y-4">
+      <div>
+        <h2 class="text-lg font-bold text-cyan-400 mb-2 flex items-center"><i class="fa-solid fa-book mr-2"></i> Instruções Práticas</h2>
+        <p class="text-sm text-slate-300 mb-4">Siga a sequência correta de comandos no terminal simulado ao lado para limpar e preparar o disco rígido.</p>
+        
+        <div id="instructionBox" class="bg-slate-950 p-4 rounded-lg border border-slate-800 space-y-3 text-sm">
+          <!-- Instrução injetada por JS -->
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-4">
+        <div class="flex justify-between text-xs text-slate-400 mb-1">
+          <span>Progresso da Lição</span>
+          <span id="stepCounter">Etapa 1 de 4</span>
+        </div>
+        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+          <div id="progressBar" class="bg-cyan-500 h-full w-1/4 transition-all duration-300"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERMINAL VIRTUAL SIMULADO -->
+    <div class="lg:col-span-2 bg-black border border-slate-800 rounded-xl flex flex-col h-[500px] shadow-2xl font-mono text-sm overflow-hidden">
+      <div class="bg-slate-900 px-4 py-2 border-b border-slate-800 flex justify-between items-center text-xs text-slate-400">
+        <span><i class="fa-solid fa-terminal mr-2 text-cyan-400"></i> Prompt de Comando (Administrador)</span>
+        <span class="text-emerald-400">Status: Em Execução</span>
+      </div>
+      
+      <div id="terminalOutput" class="flex-1 p-4 overflow-y-auto space-y-2 text-slate-200">
+        <div class="text-slate-500">Microsoft Windows [Versão 10.0.19045]</div>
+        <div class="text-slate-500">(c) Microsoft Corporation. Todos os direitos reservados.</div>
+        <br>
+        <div>C:\Windows\system32&gt; <span class="text-cyan-400">diskpart</span></div>
+        <div class="text-slate-300">
+          Microsoft DiskPart versão 10.0.19041.1<br>
+          Copyright (C) Microsoft Corporation.<br>
+          Na área de computadores: LABORATORIO-PC<br><br>
+        </div>
+      </div>
+
+      <!-- INPUT DO TERMINAL -->
+      <div class="bg-slate-900 p-3 border-t border-slate-800 flex items-center">
+        <span class="text-cyan-400 mr-2 font-bold">DISKPART&gt;</span>
+        <input type="text" id="terminalInput" autofocus autocomplete="off" class="flex-1 bg-transparent text-white focus:outline-none font-mono">
+        <button onclick="processCommand()" class="bg-cyan-600 hover:bg-cyan-500 text-white text-xs px-4 py-1.5 rounded font-bold transition">Enviar</button>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    document.getElementById('headerStudentName').innerText = studentData.nome;
+
+    const steps = [
+      {
+        cmd: "list disk",
+        desc: "<b>Passo 1:</b> Digite <code>list disk</code> para listar todos os discos conectados ao computador e identificar qual deles é o seu alvo.",
+        successMsg: "Disco     Recuperação  Tamanho  Livre  Din  GPT\n---------  -----------  -------  -----  ---  ---\nDisco 0    Online        465 GB   1024K        *\nDisco 1    Online         29 GB      0 B        "
+      },
+      {
+        cmd: "select disk 1",
+        desc: "<b>Passo 2:</b> Selecione o pen drive ou disco alvo digitando <code>select disk 1</code>.",
+        successMsg: "O disco 1 é agora o disco selecionado."
+      },
+      {
+        cmd: "clean",
+        desc: "<b>Passo 3:</b> Apague todos os dados e partições do disco selecionado digitando <code>clean</code>.",
+        successMsg: "O DiskPart limpou o disco com êxito."
+      },
+      {
+        cmd: "create partition primary",
+        desc: "<b>Passo 4:</b> Crie uma nova partição primária digitando <code>create partition primary</code>.",
+        successMsg: "O DiskPart criou a partição especificada com êxito."
+      }
+    ];
+
+    function renderInstruction() {
+      if (currentStep > totalSteps) {
+        document.getElementById('instructionBox').innerHTML = `
+          <div class="text-emerald-400 font-bold text-center py-4">
+            <i class="fa-solid fa-circle-check text-3xl mb-2"></i><br>
+            Parabéns! Lição concluída com sucesso!
+          </div>
+          <button onclick="window.location.href='../index.html'" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded text-xs transition">Voltar ao Portal</button>
+        `;
+        document.getElementById('stepCounter').innerText = "Concluído";
+        document.getElementById('progressBar').style.width = "100%";
+        saveProgress('concluido', totalSteps);
+        return;
+      }
+
+      document.getElementById('instructionBox').innerHTML = steps[currentStep - 1].desc;
+      document.getElementById('stepCounter').innerText = `Etapa ${currentStep} de ${totalSteps}`;
+      document.getElementById('progressBar').style.width = `${(currentStep / totalSteps) * 100}%`;
+    }
+
+    async function saveProgress(status, etapa) {
+      const tempoGasto = Math.floor((Date.now() - startTime) / 1000);
+      await _supabase.from('se_progresso').upsert({
+        aluno_id: studentData.id,
+        modulo_id: 'diskpart_cmd',
+        status: status,
+        etapa_atual: etapa,
+        total_etapas: totalSteps,
+        tempo_segundos: tempoGasto,
+        updated_at: new Date()
+      }, { onConflict: 'aluno_id, modulo_id' });
+    }
+
+    const inputField = document.getElementById('terminalInput');
+    inputField.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        processCommand();
+      }
+    });
+
+    function processCommand() {
+      if (currentStep > totalSteps) return;
+
+      const cmd = inputField.value.trim().toLowerCase();
+      const output = document.getElementById('terminalOutput');
+
+      // Escreve o comando do usuário no terminal
+      output.innerHTML += `<div>DISKPART&gt; <span class="text-white">${inputField.value}</span></div>`;
+      
+      const expected = steps[currentStep - 1].cmd.toLowerCase();
+
+      if (cmd === expected) {
+        output.innerHTML += `<div class="text-slate-300 whitespace-pre-line">${steps[currentStep - 1].successMsg}</div><br>`;
+        currentStep++;
+        saveProgress('em_andamento', currentStep - 1);
+        renderInstruction();
+      } else {
+        output.innerHTML += `<div class="text-red-400">Comando inválido para esta etapa ou sintaxe incorreta. Tente novamente. Dica: digite <b class="text-white">${steps[currentStep - 1].cmd}</b></div><br>`;
+      }
+
+      inputField.value = '';
+      output.scrollTop = output.scrollHeight;
+    }
+
+    renderInstruction();
+  </script>
+</body>
+</html>
