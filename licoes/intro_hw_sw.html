@@ -344,16 +344,22 @@
         async function saveProgressToSupabase(stepNumber) {
             if (!currentStudent || !currentStudent.id) return;
             try {
-                await _supabase
+                const payload = {
+                    aluno_id: currentStudent.id,
+                    module_id: MODULE_ID,
+                    current_step: stepNumber,
+                    xp: totalXP,
+                    tempo_segundos: secondsElapsed,
+                    updated_at: new Date().toISOString()
+                };
+
+                const { error } = await _supabase
                     .from('progresso_alunos')
-                    .upsert({
-                        aluno_id: currentStudent.id,
-                        module_id: MODULE_ID,
-                        current_step: stepNumber,
-                        xp: totalXP,
-                        tempo_segundos: secondsElapsed,
-                        updated_at: new Date().toISOString()
-                    }, { onConflict: 'aluno_id,module_id' });
+                    .upsert(payload);
+
+                if (error) {
+                    console.warn("Aviso do Supabase (verifique se a tabela 'progresso_alunos' existe e possui as colunas 'aluno_id' e 'module_id'):", error.message);
+                }
             } catch (err) {
                 console.error("Erro ao sincronizar progresso com Supabase:", err);
             }
