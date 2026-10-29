@@ -28,17 +28,56 @@
         let currentStudent = null;
         const MODULE_ID = "hardware_montagem";
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             const saved = sessionStorage.getItem('active_student');
             if (saved) {
                 currentStudent = JSON.parse(saved);
                 document.getElementById('student-name-display').innerText = currentStudent.nome;
                 document.getElementById('student-class-display').innerText = currentStudent.turma;
+                await loadIncrementalProgress();
             } else {
                 document.getElementById('student-name-display').innerText = "Aluno Visitante";
                 document.getElementById('student-class-display').innerText = "Geral";
             }
         });
+
+        async function saveIncrementalProgress(stepNum, xpEarned) {
+            if (!currentStudent || !currentStudent.id) return;
+            try {
+                const { error } = await _supabase.from('progresso_alunos').upsert({
+                    aluno_id: currentStudent.id,
+                    module_id: MODULE_ID,
+                    current_step: stepNum,
+                    xp: xpEarned,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'aluno_id,module_id' });
+                if (error) console.error("Erro ao salvar progresso incremental:", error);
+            } catch (err) {
+                console.error("Exceção ao salvar progresso:", err);
+            }
+        }
+
+        async function loadIncrementalProgress() {
+            if (!currentStudent || !currentStudent.id) return;
+            try {
+                const { data, error } = await _supabase
+                    .from('progresso_alunos')
+                    .select('*')
+                    .eq('aluno_id', currentStudent.id)
+                    .eq('module_id', MODULE_ID)
+                    .single();
+                if (data) {
+                    currentStepIndex = data.current_step || 0;
+                    totalXP = data.xp || 0;
+                    document.getElementById('xp-counter').innerText = totalXP + " XP";
+                    if (currentStepIndex >= LESSON_STEPS.length) {
+                        currentStepIndex = LESSON_STEPS.length - 1;
+                    }
+                }
+            } catch (err) {
+                console.log("Nenhum progresso anterior encontrado ou tabela em branco.");
+            }
+        }
 
         function returnToPortal() {
             if (window.opener && !window.opener.closed) {
@@ -211,7 +250,10 @@
 
         window.onload = function() {
             startTimer();
-            renderStep(0);
+            // renderStep will be called after loadIncrementalProgress if student exists, or immediately
+            setTimeout(() => {
+                renderStep(currentStepIndex);
+            }, 300);
         };
 
         function startTimer() {
@@ -224,14 +266,19 @@
         }
 
         function renderStep(index) {
-            const step = LESSON_STEPS[index];
+            if (index >= LESSON_STEPS.length) {
+                document.getElementById('completion-modal').classList.remove('hidden');
+                return;
+            }
+            currentStepIndex = index;
             currentItemIndex = 0;
+            const step = LESSON_STEPS[index];
             document.getElementById('current-step-num').innerText = step.id;
             document.getElementById('step-title').innerText = step.title;
             document.getElementById('step-badge').innerText = step.badge;
             document.getElementById('step-content').innerHTML = step.content;
 
-            const progressPercent = ((index) / LESSON_STEPS.length) * 100;
+            const progressPercent = (index / LESSON_STEPS.length) * 100;
             document.getElementById('top-progress-bar').style.width = `${progressPercent}%`;
 
             document.getElementById('next-btn').disabled = true;
@@ -288,9 +335,14 @@
         function verifyQuizAnswer(selected, correct) {
             if (selected === correct) {
                 currentItemIndex++;
-                loadQuizItem(LESSON_STEPS[currentStepIndex]);
+                const step = LESSON_STEPS[currentStepIndex];
+                if (currentItemIndex < step.items.length) {
+                    loadQuizItem(step);
+                } else {
+                    loadQuizItem(step);
+                }
             } else {
-                alert("Resposta incorreta. Revise a teoria e tente novamente.");
+                alert("Resposta incorreta. Tente novamente!");
             }
         }
 
@@ -300,28 +352,28 @@
                 container.innerHTML = `
                     <div class="p-8 bg-slate-900 border border-emerald-500/40 rounded-xl text-center space-y-3">
                         <i class="fa-solid fa-circle-check text-emerald-400 text-4xl"></i>
-                        <h4 class="font-bold text-white text-lg">Montagem do Computador Concluída com Éxito!</h4>
+                        <h4 class="font-bold text-white text-lg">Montagem Prática Concluída!</h4>
                     </div>
                 `;
                 unlockNextStep();
                 return;
             }
 
-            const current = assemblySteps[currentAssemblyIndex];
-            let btnsHTML = current.options.map(opt => `
-                <button onclick="verifyAssemblyStep('${opt.replace(/'/g, "\'")}', '${current.stepName.replace(/'/g, "\'")}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-xs sm:text-sm transition">
+            const currentStepData = assemblySteps[currentAssemblyIndex];
+            let buttonsHTML = currentStepData.options.map(opt => `
+                <button onclick="verifyAssemblyStep('${opt.replace(/'/g, "\'")}', '${currentStepData.stepName.replace(/'/g, "\'")}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-xs sm:text-sm transition">
                     ${opt}
                 </button>
             `).join('');
 
             container.innerHTML = `
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6 text-center">
-                    <span class="text-xs uppercase tracking-wider text-cyan-400 font-bold">Etapa de Montagem ${currentAssemblyIndex + 1} de ${assemblySteps.length}</span>
-                    <div class="text-base font-bold text-white bg-slate-950 p-4 rounded-lg border border-slate-800">
-                        Qual é o próximo passo correto de montagem?
+                    <span class="text-xs uppercase tracking-wider text-cyan-400 font-bold">Passo Prático ${currentAssemblyIndex + 1} de ${assemblySteps.length}</span>
+                    <div class="text-sm sm:text-base font-extrabold text-white bg-slate-950 p-4 rounded-lg border border-slate-800">
+                        Selecione a ação correta para: "${currentStepData.stepName}"
                     </div>
                     <div class="grid grid-cols-1 gap-3">
-                        ${btnsHTML}
+                        ${buttonsHTML}
                     </div>
                 </div>
             `;
@@ -332,43 +384,35 @@
                 currentAssemblyIndex++;
                 loadAssemblySim();
             } else {
-                alert("Etapa incorreta na ordem de montagem. Verifique a sequência física adequada.");
+                alert("Sequência incorreta. Analise a ordem lógica de montagem!");
             }
         }
 
-        function unlockNextStep() {
-            totalXP += 25;
-            document.getElementById('xp-counter').innerText = `${totalXP} XP`;
-            document.getElementById('step-feedback').className = "text-xs font-semibold flex items-center gap-1.5 text-emerald-400";
-            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-check"></i> Etapa validada! Clique em Próximo Tópico.`;
+        async function unlockNextStep() {
+            const step = LESSON_STEPS[currentStepIndex];
+            totalXP += step.xp;
+            document.getElementById('xp-counter').innerText = totalXP + " XP";
+            
             document.getElementById('next-btn').disabled = false;
+            const feedback = document.getElementById('step-feedback');
+            feedback.className = "text-xs font-medium flex items-center gap-1.5 text-emerald-400";
+            feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> Tópico concluído! (+${step.xp} XP)`;
+
+            // Salva progresso incremental no Supabase
+            await saveIncrementalProgress(currentStepIndex + 1, totalXP);
         }
 
         async function nextStep() {
-            if (currentStepIndex < LESSON_STEPS.length - 1) {
-                currentStepIndex++;
-                renderStep(currentStepIndex);
+            currentAssemblyIndex = 0;
+            currentStepIndex++;
+            if (currentStepIndex >= LESSON_STEPS.length) {
+                document.getElementById('top-progress-bar').style.width = `100%`;
+                document.getElementById('completion-modal').classList.remove('hidden');
+                clearInterval(timerInterval);
+                await saveIncrementalProgress(LESSON_STEPS.length, totalXP);
             } else {
-                finishModule();
+                renderStep(currentStepIndex);
             }
-        }
-
-        async function finishModule() {
-            if (timerInterval) clearInterval(timerInterval);
-            document.getElementById('top-progress-bar').style.width = `100%`;
-
-            if (currentStudent && currentStudent.id) {
-                await _supabase.from('se_progresso').upsert({
-                    aluno_id: currentStudent.id,
-                    modulo_id: MODULE_ID,
-                    status: 'concluido',
-                    etapa_atual: 4,
-                    total_etapas: 4,
-                    updated_at: new Date()
-                });
-            }
-
-            document.getElementById('completion-modal').classList.remove('hidden');
         }
     </script>
 </body>
