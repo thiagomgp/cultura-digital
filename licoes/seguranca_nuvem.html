@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cultura Digital - Módulo 5: Segurança Digital, Senhas e Nuvem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between antialiased">
+
+    <script>
+        const SUPABASE_URL = "https://pnybenlfazdjgqnyuypn.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_2pzNR2UAF2-jfiXQDqrA3w_lwFryik0";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let currentStudent = null;
+        const MODULE_ID = "seguranca_nuvem";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = sessionStorage.getItem('active_student');
+            if (saved) {
+                currentStudent = JSON.parse(saved);
+                document.getElementById('student-name-display').innerText = currentStudent.nome;
+                document.getElementById('student-class-display').innerText = currentStudent.turma;
+            } else {
+                document.getElementById('student-name-display').innerText = "Aluno Visitante";
+                document.getElementById('student-class-display').innerText = "Geral";
+            }
+        });
+
+        function returnToPortal() {
+            if (window.opener && !window.opener.closed) {
+                window.opener.focus();
+                window.close();
+            } else {
+                window.location.href = "https://sites.google.com/view/culturadigitalimersiva";
+            }
+        }
+    </script>
+
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center space-x-3">
+                    <button onclick="returnToPortal()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 p-2.5 rounded-xl font-bold transition">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <h1 class="font-bold text-lg text-white leading-tight">Cultura Digital <span class="text-xs bg-cyan-500/20 text-cyan-400 font-medium px-2 py-0.5 rounded border border-cyan-500/30">Módulo 5</span></h1>
+                        <p class="text-xs text-slate-400">Segurança Digital, Senhas e Nuvem</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-4 w-full md:w-auto justify-end">
+                <div class="flex items-center gap-2 bg-slate-900/80 border border-slate-700/80 px-3 py-1.5 rounded-lg text-xs text-slate-300">
+                    <i class="fa-solid fa-user-graduate text-cyan-400"></i>
+                    <span id="student-name-display" class="font-bold">--</span>
+                    <span class="text-slate-600">|</span>
+                    <span id="student-class-display" class="text-slate-400">--</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-900/80 border border-slate-700/80 px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-trophy text-amber-400"></i>
+                        <span id="xp-counter">0 XP</span>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-700/80 px-3 py-1.5 rounded-lg text-xs font-semibold text-cyan-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock"></i>
+                        <span id="timer-display">00:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-full bg-slate-900 h-1.5">
+            <div id="top-progress-bar" class="bg-gradient-to-r from-cyan-500 to-emerald-400 h-1.5 w-0 transition-all duration-500"></div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section class="lg:col-span-5 bg-slate-800 border border-slate-700 rounded-2xl flex flex-col shadow-xl overflow-hidden h-full min-h-[580px]">
+            <div class="p-4 bg-slate-800/90 border-b border-slate-700/80 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Tópico Teórico <span id="current-step-num">1</span> de 4</span>
+                    <h2 id="step-title" class="text-lg font-bold text-white">Carregando...</h2>
+                </div>
+                <span id="step-badge" class="text-xs bg-slate-700 text-slate-300 font-medium px-2 py-1 rounded-md">Fundamentação</span>
+            </div>
+
+            <div class="p-5 flex-1 overflow-y-auto space-y-4 text-slate-300 text-xs sm:text-sm leading-relaxed" id="step-content"></div>
+
+            <div class="p-4 bg-slate-800 border-t border-slate-700 flex items-center justify-between gap-3">
+                <div id="step-feedback" class="text-xs font-medium flex items-center gap-1.5 text-slate-400">
+                    <i class="fa-solid fa-circle-info"></i> Complete o desafio ao lado para avançar.
+                </div>
+                <button id="next-btn" onclick="nextStep()" disabled class="disabled:opacity-50 disabled:cursor-not-allowed bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 transition-all">
+                    <span>Próximo Tópico</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <section class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden h-full min-h-[580px] p-6">
+            <h3 class="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-cyan-400"></i>
+                <span>Laboratório de Teste de Senhas e Nuvem</span>
+            </h3>
+            <div id="interactive-container" class="flex-1 flex flex-col justify-center gap-4"></div>
+        </section>
+    </main>
+
+    <div id="completion-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-6 text-center">
+            <div class="w-16 h-16 bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-award"></i>
+            </div>
+            <div>
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Módulo Concluído com Sucesso!</span>
+                <h3 class="text-2xl font-extrabold text-white mt-1">Cibersegurança e Nuvem Dominadas</h3>
+                <p class="text-slate-300 text-sm mt-2">Você aprendeu a criar senhas fortes, identificar golpes de Phishing e armazenar arquivos na nuvem com segurança.</p>
+            </div>
+            <button onclick="returnToPortal()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition">
+                <i class="fa-solid fa-house mr-2"></i>Voltar ao Portal de Lições
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const LESSON_STEPS = [
+            {
+                id: 1,
+                title: "Engenharia Social e Phishing",
+                badge: "Segurança Digital",
+                content: `
+                    <p class="font-semibold text-white">Ameaças Digitais:</p>
+                    <p>Phishing é uma técnica de engano onde cibercriminosos enviam e-mails ou links falsos imitando bancos ou redes sociais para roubar senhas e dados pessoais.</p>
+                `,
+                xp: 25,
+                type: 'quiz',
+                items: [
+                    { name: "Qual é a principal característica de um ataque de Phishing na internet?", answer: "Mensagens fraudulentas imitando instituições reais para roubar senhas", options: ["Mensagens fraudulentas imitando instituições reais para roubar senhas", "Atualização oficial do sistema operacional"] },
+                    { name: "O que deve ser verificado com atenção ao receber um e-mail solicitando alteração de senha de emergência?", answer: "O endereço real do remetente e o domínio do link fornecido", options: ["O endereço real do remetente e o domínio do link fornecido", "Apenas a imagem do logotipo no cabeçalho"] }
+                ]
+            },
+            {
+                id: 2,
+                title: "Criação de Senhas Fortes e Autenticação (2FA)",
+                badge: "Proteção de Contas",
+                content: `
+                    <p class="font-semibold text-white">Anatomia de uma Senha Segura:</p>
+                    <p>Senhas seguras devem possuir no mínimo 12 caracteres, combinando letras maiúsculas/minúsculas, números e símbolos especiais (!@#$). A Autenticação em Duas Etapas (2FA) adiciona uma camada extra de proteção via aplicativo ou SMS.</p>
+                `,
+                xp: 25,
+                type: 'quiz',
+                items: [
+                    { name: "Qual das senhas abaixo é considerada a mais robusta contra ataques de força bruta?", answer: "C3#t3xp@2026!", options: ["C3#t3xp@2026!", "12345678"] },
+                    { name: "Como a Autenticação em Duas Etapas (2FA) protege sua conta caso sua senha seja vazada?", answer: "Exige um código temporário adicional gerado no seu celular", options: ["Exige um código temporário adicional gerado no seu celular", "Muda o nome de usuário automaticamente"] }
+                ]
+            },
+            {
+                id: 3,
+                title: "Laboratório: Testador e Gerador de Senhas Fortes",
+                badge: "Simulador de Senhas",
+                content: `
+                    <p class="font-semibold text-white">Desafio de Segurança:</p>
+                    <p>Crie e digite uma senha que atinja o status <strong>'FORTE'</strong> no medidor ao lado (mínimo de 10 caracteres contendo maiúscula, número e símbolo).</p>
+                `,
+                xp: 25,
+                type: 'pass_tester'
+            },
+            {
+                id: 4,
+                title: "Armazenamento na Nuvem vs. Local",
+                badge: "Cloud Computing",
+                content: `
+                    <p class="font-semibold text-white">Vantagens do Armazenamento em Nuvem:</p>
+                    <p>Serviços como Google Drive e OneDrive guardam arquivos em servidores remotos, garantindo backup automático, sincronização e acesso a partir de qualquer dispositivo conectado à internet.</p>
+                `,
+                xp: 25,
+                type: 'quiz',
+                items: [
+                    { name: "Qual é a vantagem principal de salvar um trabalho escolar na nuvem em vez de salvar apenas no HD do computador?", answer: "Acessar e editar de qualquer dispositivo e prevenir perda física", options: ["Acessar e editar de qualquer dispositivo e prevenir perda física", "Eliminar a necessidade de conexão com a internet"] }
+                ]
+            }
+        ];
+
+        let currentStepIndex = 0;
+        let totalXP = 0;
+        let secondsElapsed = 0;
+        let timerInterval = null;
+        let currentItemIndex = 0;
+
+        window.onload = function() {
+            startTimer();
+            renderStep(0);
+        };
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function renderStep(index) {
+            const step = LESSON_STEPS[index];
+            currentItemIndex = 0;
+            document.getElementById('current-step-num').innerText = step.id;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-badge').innerText = step.badge;
+            document.getElementById('step-content').innerHTML = step.content;
+
+            const progressPercent = ((index) / LESSON_STEPS.length) * 100;
+            document.getElementById('top-progress-bar').style.width = `${progressPercent}%`;
+
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('step-feedback').className = "text-xs font-medium flex items-center gap-1.5 text-slate-400";
+            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-info"></i> Complete a atividade ao lado.`;
+
+            loadInteractiveArea(step);
+        }
+
+        function loadInteractiveArea(step) {
+            const container = document.getElementById('interactive-container');
+            container.innerHTML = '';
+
+            if (step.type === 'quiz') {
+                loadQuizItem(step);
+            } else if (step.type === 'pass_tester') {
+                loadPasswordTester();
+            }
+        }
+
+        function loadQuizItem(step) {
+            const container = document.getElementById('interactive-container');
+            if (currentItemIndex >= step.items.length) {
+                container.innerHTML = `
+                    <div class="p-8 bg-slate-900 border border-emerald-500/40 rounded-xl text-center space-y-3">
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-4xl"></i>
+                        <h4 class="font-bold text-white text-lg">Tópico Concluído com Sucesso!</h4>
+                    </div>
+                `;
+                unlockNextStep();
+                return;
+            }
+
+            const item = step.items[currentItemIndex];
+            let buttonsHTML = item.options.map(opt => `
+                <button onclick="verifyQuizAnswer('${opt.replace(/'/g, "\'")}', '${item.answer.replace(/'/g, "\'")}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-xs sm:text-sm transition">
+                    ${opt}
+                </button>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6 text-center">
+                    <span class="text-xs uppercase tracking-wider text-cyan-400 font-bold">Questão ${currentItemIndex + 1} de ${step.items.length}</span>
+                    <div class="text-sm sm:text-base font-extrabold text-white bg-slate-950 p-4 rounded-lg border border-slate-800">
+                        "${item.name}"
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        ${buttonsHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        function verifyQuizAnswer(selected, correct) {
+            if (selected === correct) {
+                currentItemIndex++;
+                loadQuizItem(LESSON_STEPS[currentStepIndex]);
+            } else {
+                alert("Resposta incorreta. Revise a teoria e tente novamente.");
+            }
+        }
+
+        function loadPasswordTester() {
+            const container = document.getElementById('interactive-container');
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                    <label class="block text-xs font-bold text-cyan-400 uppercase">Crie uma senha forte:</label>
+                    <input type="password" id="pass-input" oninput="testPassword()" class="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white font-mono text-sm outline-none" placeholder="Digite uma senha...">
+                    <div id="pass-strength-bar" class="w-full bg-slate-800 h-2 rounded overflow-hidden">
+                        <div id="pass-bar-fill" class="h-full w-0 bg-red-500 transition-all"></div>
+                    </div>
+                    <p id="pass-status" class="text-xs font-bold text-red-400">Status: MUITO FRACA</p>
+                </div>
+            `;
+        }
+
+        function testPassword() {
+            const pass = document.getElementById('pass-input').value;
+            const fill = document.getElementById('pass-bar-fill');
+            const status = document.getElementById('pass-status');
+
+            let score = 0;
+            if (pass.length >= 10) score += 25;
+            if (/[A-Z]/.test(pass)) score += 25;
+            if (/[0-9]/.test(pass)) score += 25;
+            if (/[!@#$%^&*()]/.test(pass)) score += 25;
+
+            fill.style.width = score + '%';
+
+            if (score === 100) {
+                fill.className = 'h-full bg-emerald-500 transition-all';
+                status.className = 'text-xs font-bold text-emerald-400';
+                status.innerText = 'Status: SENHA FORTE E SEGURA!';
+                unlockNextStep();
+            } else {
+                fill.className = 'h-full bg-amber-500 transition-all';
+                status.className = 'text-xs font-bold text-amber-400';
+                status.innerText = 'Status: SENHA FRACA ou MEDIÓCRA (Adicione maiúscula, número e símbolos)';
+            }
+        }
+
+        function unlockNextStep() {
+            totalXP += 25;
+            document.getElementById('xp-counter').innerText = `${totalXP} XP`;
+            document.getElementById('step-feedback').className = "text-xs font-semibold flex items-center gap-1.5 text-emerald-400";
+            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-check"></i> Etapa validada! Clique em Próximo Tópico.`;
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        async function nextStep() {
+            if (currentStepIndex < LESSON_STEPS.length - 1) {
+                currentStepIndex++;
+                renderStep(currentStepIndex);
+            } else {
+                finishModule();
+            }
+        }
+
+        async function finishModule() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('top-progress-bar').style.width = `100%`;
+
+            if (currentStudent && currentStudent.id) {
+                await _supabase.from('se_progresso').upsert({
+                    aluno_id: currentStudent.id,
+                    modulo_id: MODULE_ID,
+                    status: 'concluido',
+                    etapa_atual: 4,
+                    total_etapas: 4,
+                    updated_at: new Date()
+                });
+            }
+
+            document.getElementById('completion-modal').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
