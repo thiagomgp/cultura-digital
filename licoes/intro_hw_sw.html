@@ -27,11 +27,26 @@
         
         let currentStudent = null;
         const MODULE_ID = "intro_hw_sw";
+        const TOTAL_STEPS = 4;
 
         window.addEventListener('DOMContentLoaded', () => {
-            const saved = sessionStorage.getItem('active_student');
-            if (saved) {
-                currentStudent = JSON.parse(saved);
+            // Captura os dados passados via parâmetros de URL pelo index.html
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlId = urlParams.get('id');
+            const urlNome = urlParams.get('nome');
+            const urlTurma = urlParams.get('turma');
+
+            if (urlId && urlNome) {
+                currentStudent = { id: urlId, nome: urlNome, turma: urlTurma || 'Geral' };
+                sessionStorage.setItem('active_student', JSON.stringify(currentStudent));
+            } else {
+                const saved = sessionStorage.getItem('active_student');
+                if (saved) {
+                    currentStudent = JSON.parse(saved);
+                }
+            }
+
+            if (currentStudent && currentStudent.nome) {
                 document.getElementById('student-name-display').innerText = currentStudent.nome;
                 document.getElementById('student-class-display').innerText = currentStudent.turma;
             } else {
@@ -46,7 +61,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-start">
                 <div class="flex items-center space-x-3">
-                    <a href="javascript:history.back()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 p-2.5 rounded-xl font-bold transition">
+                    <a href="../index.html" class="bg-slate-700 hover:bg-slate-600 text-slate-200 p-2.5 rounded-xl font-bold transition">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
                     <div>
@@ -128,9 +143,9 @@
                 <h3 class="text-2xl font-extrabold text-white mt-1">Fundamentos Consolidados</h3>
                 <p class="text-slate-300 text-sm mt-2">Você concluiu com sucesso a carga teórica e analítica sobre arquitetura de computadores e licenças abertas.</p>
             </div>
-            <button onclick="window.history.back()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition">
+            <a href="../index.html" class="block w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition text-center">
                 <i class="fa-solid fa-house mr-2"></i>Voltar ao Portal de Lições
-            </button>
+            </a>
         </div>
     </div>
 
@@ -253,6 +268,7 @@
             document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-info"></i> Responda aos itens analíticos ao lado.`;
 
             loadCurrentItem();
+            saveProgressToSupabase(index);
         }
 
         function loadCurrentItem() {
@@ -308,6 +324,8 @@
             document.getElementById('next-btn').disabled = false;
             document.getElementById('step-feedback').className = "text-xs font-medium flex items-center gap-1.5 text-emerald-400";
             document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-check"></i> Desafio concluído! Clique ao lado para avançar.`;
+            
+            saveProgressToSupabase(currentStepIndex + 1);
         }
 
         async function nextStep() {
@@ -318,22 +336,25 @@
                 clearInterval(timerInterval);
                 document.getElementById('top-progress-bar').style.width = '100%';
                 document.getElementById('completion-modal').classList.remove('hidden');
-                await saveProgress();
+                await saveProgressToSupabase(TOTAL_STEPS);
             }
         }
 
-        async function saveProgress() {
+        async function saveProgressToSupabase(stepNumber) {
             if (!currentStudent || !currentStudent.id) return;
             try {
-                await _supabase.from('progresso_licoes').upsert({
-                    student_id: currentStudent.id,
-                    module_id: MODULE_ID,
-                    xp: totalXP,
-                    tempo_segundos: secondsElapsed,
-                    completed_at: new Date().toISOString()
-                });
+                await _supabase
+                    .from('progresso_alunos')
+                    .upsert({
+                        aluno_id: currentStudent.id,
+                        module_id: MODULE_ID,
+                        current_step: stepNumber,
+                        xp: totalXP,
+                        tempo_segundos: secondsElapsed,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'aluno_id,module_id' });
             } catch (err) {
-                console.error("Erro ao salvar progresso:", err);
+                console.error("Erro ao sincronizar progresso com Supabase:", err);
             }
         }
     </script>
