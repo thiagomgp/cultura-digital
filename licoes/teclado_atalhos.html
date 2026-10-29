@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cultura Digital - Módulo 2: Teclado, Funções, Atalhos e Acentuação</title>
+    <title>Cultura Digital - Módulo 2: Domínio do Teclado, Atalhos e Ditado Amplo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -51,7 +51,7 @@
                     </a>
                     <div>
                         <h1 class="font-bold text-lg text-white leading-tight">Cultura Digital <span class="text-xs bg-cyan-500/20 text-cyan-400 font-medium px-2 py-0.5 rounded border border-cyan-500/30">Módulo 2</span></h1>
-                        <p class="text-xs text-slate-400">Domínio do Teclado, Atalhos e Acentuação</p>
+                        <p class="text-xs text-slate-400">Domínio Avançado do Teclado, Atalhos e Ditado Extenso</p>
                     </div>
                 </div>
             </div>
@@ -98,35 +98,40 @@
 
             <div class="p-4 bg-slate-800 border-t border-slate-700 flex items-center justify-between gap-3">
                 <div id="step-feedback" class="text-xs font-medium flex items-center gap-1.5 text-slate-400">
-                    <i class="fa-solid fa-circle-info"></i> Resolva o desafio analítico ao lado para avançar.
+                    <i class="fa-solid fa-circle-info"></i> Complete a atividade ao lado para avançar.
                 </div>
                 <button id="next-btn" onclick="nextStep()" disabled class="disabled:opacity-50 disabled:cursor-not-allowed bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 transition-all">
-                    <span>Próximo Tópico</span>
+                    <span>Próxima Etapa</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
         </section>
 
-        <!-- DIREITA: LABORATÓRIO ANALÍTICO DE TECLADO -->
+        <!-- DIREITA: LABORATÓRIO PRÁTICO E DITADO AMPLO -->
         <section class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden h-full min-h-[580px] p-6">
             <h3 class="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-keyboard text-cyan-400"></i>
-                <span>Laboratório de Teclado, Atalhos e Sintaxe</span>
+                <span>Laboratório Prático, Atalhos e Ditado Amplo</span>
             </h3>
             <div id="interactive-container" class="flex-1 flex flex-col justify-center gap-4"></div>
         </section>
     </main>
 
-    <!-- MODAL DE CONCLUSÃO -->
+    <!-- MODAL DE CONCLUSÃO & RANKING -->
     <div id="completion-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-6 text-center">
             <div class="w-16 h-16 bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">
-                <i class="fa-solid fa-award"></i>
+                <i class="fa-solid fa-trophy"></i>
             </div>
             <div>
-                <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Módulo Concluído com Mérito!</span>
-                <h3 class="text-2xl font-extrabold text-white mt-1">Domínio do Teclado Consolidado</h3>
-                <p class="text-slate-300 text-sm mt-2">Você concluiu com sucesso a carga teórica e analítica sobre funções de teclas, atalhos de produtividade e regras de acentuação.</p>
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Desafio de Digitação Concluído!</span>
+                <h3 class="text-2xl font-extrabold text-white mt-1">Pontuação Registrada com Sucesso</h3>
+                <p class="text-slate-300 text-sm mt-2">Seu tempo e índice de precisão foram gravados na base de dados.</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-700 rounded-xl p-4 text-xs text-left space-y-2">
+                <div class="flex justify-between"><span class="text-slate-400">Aluno:</span> <strong id="res-name" class="text-white">--</strong></div>
+                <div class="flex justify-between"><span class="text-slate-400">Tempo de Execução:</span> <strong id="res-time" class="text-cyan-400">--</strong></div>
+                <div class="flex justify-between"><span class="text-slate-400">Pontuação Final:</span> <strong id="res-xp" class="text-amber-400">-- XP</strong></div>
             </div>
             <button onclick="window.history.back()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition">
                 <i class="fa-solid fa-house mr-2"></i>Voltar ao Portal de Lições
@@ -138,76 +143,61 @@
         const LESSON_STEPS = [
             {
                 id: 1,
-                title: "Anatomia e Zonas Funcionais do Teclado",
+                title: "Anatomia e Teclas Modificadoras",
                 badge: "Teoria & Análise",
                 content: `
-                    <p class="font-semibold text-white">1. Blocos Funcionais:</p>
-                    <p>O teclado de computador moderno divide-se em zonas lógicas distintas: o Bloco Alfanumérico (centro), as Teclas de Função (F1 a F12) no topo, o Bloco de Navegação (Setas, Insert, Delete, Home, End, Page Up/Down) e o Teclado Numérico Lateral (Numpad).</p>
-                    
-                    <p class="font-semibold text-white mt-2">2. Teclas Modificadoras:</p>
-                    <p>Teclas como Shift, Ctrl (Control), Alt e Win (Super) não geram caracteres isolados por si só; elas modificam o comportamento funcional de outras teclas acionadas simultaneamente, permitindo o acesso a caracteres secundários e comandos avançados do sistema operacional.</p>
+                    <p class="font-semibold text-white">Zonas do Teclado e Modificadores:</p>
+                    <p>O teclado divide-se em blocos funcionais (Alfanumérico, Função, Navegação e Numpad). Teclas como <strong>Ctrl</strong>, <strong>Alt</strong>, <strong>Shift</strong> e <strong>AltGr</strong> modificam o comportamento das teclas comuns para gerar caracteres terciários e comandos rápidos.</p>
                 `,
                 xp: 25,
+                type: 'quiz',
                 items: [
-                    { name: "Qual bloco do teclado é primariamente utilizado para digitação de textos corridos e pontuação?", answer: "Bloco Alfanumérico", options: ["Bloco Alfanumérico", "Teclas de Função"] },
                     { name: "Qual tecla modificadora combinada com 'C' e 'V' viabiliza operações rápidas de área de transferência?", answer: "Ctrl (Control)", options: ["Ctrl (Control)", "Caps Lock"] },
                     { name: "Para que serve primariamente a tecla 'Home' no Bloco de Navegação?", answer: "Retornar o cursor para o início da linha atual", options: ["Retornar o cursor para o início da linha atual", "Apagar o caractere à direita"] }
                 ]
             },
             {
                 id: 2,
-                title: "Regras de Acentuação Gráfica e Caracteres Especiais",
-                badge: "Sintaxe & Ortografia",
+                title: "Acentuação ABNT2 e Caracteres Especiais",
+                badge: "Ortografia & Teclas Mortas",
                 content: `
-                    <p class="font-semibold text-white">O Mecanismo de Teclas Mortas (Dead Keys):</p>
-                    <p>Em teclados configurados no padrão brasileiro (ABNT2), os acentos gráficos (agudo, circunflexo, crase, til) operam como teclas mortas. Ao pressioná-las, o cursor não avança imediatamente; o sistema aguarda a próxima letra para combiná-los num único caractere acentuado.</p>
-                    
-                    <p class="font-semibold text-white mt-2">Simbologia Terciária (AltGr):</p>
-                    <p>Teclas que exibem três símbolos exigem o uso da tecla AltGr (Alt da direita) para acionar o terceiro caractere impresso no canto inferior direito da tecla.</p>
+                    <p class="font-semibold text-white">Teclas Mortas e Padrão ABNT2:</p>
+                    <p>No teclado padrão brasileiro (ABNT2), acentos (´, ˆ, ~, `) são <em>teclas mortas</em>. Para o caractere de arroba (<strong>@</strong>) no padrão ABNT2, utiliza-se a combinação <strong>AltGr + Q</strong> (ou Ctrl + Alt + Q).</p>
                 `,
                 xp: 25,
+                type: 'quiz',
                 items: [
-                    { name: "Como o sistema operacional processa uma tecla morta (ex: acento agudo seguido da letra 'a')?", answer: "Aguarda a digitação da vogal para fundi-las em um único caractere (á)", options: ["Aguarda a digitação da vogal para fundi-las em um único caractere (á)", "Exibe imediatamente o acento isolado e pula o espaço"] },
-                    { name: "Para digitar o caractere de arroba (@) em um teclado ABNT2 padrão, qual combinação deve ser efetuada?", answer: "AltGr + Q (ou Ctrl + Alt + Q)", options: ["AltGr + Q (ou Ctrl + Alt + Q)", "Shift + 2"] },
-                    { name: "Qual tecla deve ser acionada em conjunto com o C para produzir o caractere especial Ç no padrão ABNT2?", answer: "A tecla dedicada de cedilha localizada à direita da letra L", options: ["A tecla dedicada de cedilha localizada à direita da letra L", "Shift + C"] }
+                    { name: "Para digitar o caractere de arroba (@) em um teclado padrão ABNT2, qual combinação correta deve ser efetuada?", answer: "AltGr + Q (ou Ctrl + Alt + Q)", options: ["AltGr + Q (ou Ctrl + Alt + Q)", "Shift + 2"] },
+                    { name: "Como o sistema operacional processa uma tecla morta (ex: acento agudo seguido da letra 'a')?", answer: "Aguarda a digitação da vogal para fundi-las em um único caractere (á)", options: ["Aguarda a digitação da vogal para fundi-las em um único caractere (á)", "Exibe imediatamente o acento isolado e pula o espaço"] }
                 ]
             },
             {
                 id: 3,
-                title: "Atalhos Essenciais de Produtividade do Sistema",
-                badge: "Eficiência Operacional",
+                title: "Simulador Interativo: Alternância de Janelas (Alt + Tab)",
+                badge: "Simulador Prático",
                 content: `
-                    <p class="font-semibold text-white">Agilidade sem Mouse:</p>
-                    <p>O uso intensivo de atalhos de teclado reduz drasticamente o esforço físico e acelera fluxos de trabalho acadêmicos e profissionais.</p>
-                    
-                    <p class="font-semibold text-white mt-2">Atalhos Críticos no Windows:</p>
-                    <ul class="list-disc list-inside space-y-1 text-xs mt-1">
-                        <li>Alt + Tab: Alterna rapidamente entre as janelas abertas.</li>
-                        <li>Ctrl + Z: Desfaz a última ação realizada.</li>
-                        <li>Win + D: Minimiza todas as janelas e exibe a Área de Trabalho.</li>
-                        <li>Ctrl + A: Seleciona todo o conteúdo do documento ou pasta atual.</li>
-                    </ul>
+                    <p class="font-semibold text-white">Simulação do Alt + Tab:</p>
+                    <p>O atalho <strong>Alt + Tab</strong> permite alternar rapidamente entre aplicações abertas no Windows sem usar o mouse.</p>
+                    <p class="mt-2 text-cyan-400"><strong>Desafio:</strong> Clique no botão correspondente à janela solicitada no simulador ao lado para alternar com sucesso.</p>
                 `,
                 xp: 25,
-                items: [
-                    { name: "Qual atalho global do Windows desfaz imediatamente uma exclusão acidental de texto ou arquivo?", answer: "Ctrl + Z", options: ["Ctrl + Z", "Ctrl + Y"] },
-                    { name: "Para alternar de forma fluida entre diferentes janelas e aplicativos abertos, qual combinação é recomendada?", answer: "Alt + Tab", options: ["Alt + Tab", "Ctrl + Alt + Del"] },
-                    { name: "Qual atalho aciona a seleção total de todos os elementos presentes na tela ativa?", answer: "Ctrl + A", options: ["Ctrl + A", "Ctrl + S"] }
-                ]
+                type: 'alt_tab_sim'
             },
             {
                 id: 4,
-                title: "Auditoria e Validação de Competências do Teclado",
-                badge: "Avaliação Prática",
+                title: "Desafio de Digitação Amplo e Ditado Técnico",
+                badge: "Avaliação Prática Ampla",
                 content: `
-                    <p class="font-semibold text-white">Consolidação Final:</p>
-                    <p>O domínio rigoroso do teclado e de seus atalhos fundamentais distingue o operador amador do profissional digital qualificado.</p>
-                    <p>Responda à questão de auditoria final para registrar sua conclusão com êxito neste módulo.</p>
+                    <p class="font-semibold text-white">Teste Extenso de Digitação:</p>
+                    <p>Agora você colocará à prova toda a sua agilidade com acentuação complexa, símbolos terciários e pontuação especial.</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs mt-2 text-slate-300 bg-slate-900/60 p-3 rounded border border-slate-700">
+                        <li>Acentuação completa: <strong>á, ê, í, õ, à</strong>.</li>
+                        <li>Pontuação e Símbolos: <strong>( ) [ ] { } " " : ; ! ? - @ % & /</strong>.</li>
+                        <li>Colar texto (Ctrl+V) está <strong>desabilitado</strong> neste campo!</li>
+                    </ul>
                 `,
                 xp: 25,
-                items: [
-                    { name: "Qual é a função da tecla Print Screen (PrntScrn) ou da combinação Win + Shift + S em sistemas modernos?", answer: "Capturar a tela inteira ou uma seleção de recorte para a área de transferência", options: ["Capturar a tela inteira ou uma seleção de recorte para a área de transferência", "Desligar imediatamente o computador"] }
-                ]
+                type: 'dictation_test_extended'
             }
         ];
 
@@ -216,6 +206,15 @@
         let secondsElapsed = 0;
         let timerInterval = null;
         let currentItemIndex = 0;
+
+        const altTabTargets = [
+            { target: "Navegador Web", windows: ["Bloco de Notas", "Navegador Web", "Explorador de Arquivos"] },
+            { target: "Editor de Texto", windows: ["Gerenciador de Tarefas", "Editor de Texto", "Calculadora"] }
+        ];
+        let altTabStep = 0;
+
+        // TEXTO EXTENSO E COMPLETO DO DITADO
+        const targetExtendedDictation = `Atenção (estudantes do curso): a avaliação prática exige 100% de precisão! Verifique se a acentuação gráfica - agudo (á, é), circunflexo (ê, ô), til (ã, õ) e crase (à) - funciona corretamente. Não esqueça dos caracteres especiais: ç, @, %, colchetes [100%] e aspas "Cultura Digital". Você está pronto?`;
 
         window.onload = function() {
             startTimer();
@@ -244,31 +243,40 @@
 
             document.getElementById('next-btn').disabled = true;
             document.getElementById('step-feedback').className = "text-xs font-medium flex items-center gap-1.5 text-slate-400";
-            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-info"></i> Responda aos itens analíticos ao lado.`;
+            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-info"></i> Conclua a atividade ao lado.`;
 
-            loadCurrentItem();
+            loadInteractiveArea(step);
         }
 
-        function loadCurrentItem() {
-            const step = LESSON_STEPS[currentStepIndex];
+        function loadInteractiveArea(step) {
             const container = document.getElementById('interactive-container');
-            
+            container.innerHTML = '';
+
+            if (step.type === 'quiz') {
+                loadQuizItem(step);
+            } else if (step.type === 'alt_tab_sim') {
+                loadAltTabSimulator();
+            } else if (step.type === 'dictation_test_extended') {
+                loadExtendedDictationTest();
+            }
+        }
+
+        function loadQuizItem(step) {
+            const container = document.getElementById('interactive-container');
             if (currentItemIndex >= step.items.length) {
                 container.innerHTML = `
                     <div class="p-8 bg-slate-900 border border-emerald-500/40 rounded-xl text-center space-y-3">
                         <i class="fa-solid fa-circle-check text-emerald-400 text-4xl"></i>
-                        <h4 class="font-bold text-white text-lg">Tópico Teórico Concluído!</h4>
-                        <p class="text-xs text-slate-400">Análise realizada com sucesso. Prossiga para o próximo tópico.</p>
+                        <h4 class="font-bold text-white text-lg">Tópico Concluído com Sucesso!</h4>
                     </div>
                 `;
                 unlockNextStep();
                 return;
             }
 
-            const currentItem = step.items[currentItemIndex];
-            
-            let buttonsHTML = currentItem.options.map(opt => `
-                <button onclick="verifyAnswer('${opt.replace(/'/g, "\\'")}', '${currentItem.answer.replace(/'/g, "\\'")}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-xs sm:text-sm transition">
+            const item = step.items[currentItemIndex];
+            let buttonsHTML = item.options.map(opt => `
+                <button onclick="verifyQuizAnswer('${opt.replace(/'/g, "\\'")}', '${item.answer.replace(/'/g, "\\'")}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-xs sm:text-sm transition">
                     ${opt}
                 </button>
             `).join('');
@@ -277,9 +285,8 @@
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6 text-center">
                     <span class="text-xs uppercase tracking-wider text-cyan-400 font-bold">Questão ${currentItemIndex + 1} de ${step.items.length}</span>
                     <div class="text-sm sm:text-base font-extrabold text-white bg-slate-950 p-4 rounded-lg border border-slate-800">
-                        "${currentItem.name}"
+                        "${item.name}"
                     </div>
-                    <p class="text-xs text-slate-400">Selecione a resposta correta com base na teoria:</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         ${buttonsHTML}
                     </div>
@@ -287,12 +294,117 @@
             `;
         }
 
-        function verifyAnswer(selected, correct) {
+        function verifyQuizAnswer(selected, correct) {
             if (selected === correct) {
                 currentItemIndex++;
-                loadCurrentItem();
+                loadQuizItem(LESSON_STEPS[currentStepIndex]);
             } else {
-                alert("Resposta incorreta. Revise o texto teórico à esquerda e tente novamente.");
+                alert("Resposta incorreta. Revise o texto teórico e tente novamente.");
+            }
+        }
+
+        function loadAltTabSimulator() {
+            const container = document.getElementById('interactive-container');
+            if (altTabStep >= altTabTargets.length) {
+                container.innerHTML = `
+                    <div class="p-8 bg-slate-900 border border-emerald-500/40 rounded-xl text-center space-y-3">
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-4xl"></i>
+                        <h4 class="font-bold text-white text-lg">Simulação de Alt + Tab Concluída!</h4>
+                    </div>
+                `;
+                unlockNextStep();
+                return;
+            }
+
+            const currentObj = altTabTargets[altTabStep];
+            let windowsHTML = currentObj.windows.map(win => `
+                <button onclick="verifyAltTab('${win}', '${currentObj.target}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-window-maximize text-cyan-400"></i> ${win}
+                </button>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6 text-center">
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1">Simulador de Janelas Ativas (Alt + Tab pressionado)</span>
+                        <div class="text-lg font-bold text-cyan-400">Selecione a janela alvo: "${currentObj.target}"</div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-3">
+                        ${windowsHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        function verifyAltTab(selectedWin, targetWin) {
+            if (selectedWin === targetWin) {
+                altTabStep++;
+                loadAltTabSimulator();
+            } else {
+                alert("Janela incorreta! Pressione Alt+Tab e selecione a janela solicitada.");
+            }
+        }
+
+        function loadExtendedDictationTest() {
+            const container = document.getElementById('interactive-container');
+            container.innerHTML = `
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-keyboard mr-1"></i> Texto para Digitação Obrigatória:</span>
+                        <span id="char-counter" class="text-[11px] text-slate-400">0 / ${targetExtendedDictation.length} caracteres</span>
+                    </div>
+
+                    <div class="p-3.5 bg-slate-950 rounded-lg border border-slate-800 text-slate-200 font-mono text-xs leading-relaxed select-none">
+                        ${targetExtendedDictation}
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] text-slate-400 mb-1">Digite o texto exato abaixo (colar desabilitado):</label>
+                        <textarea id="dictation-input" rows="5" 
+                            onpaste="preventPaste(event)" 
+                            oninput="updateDictationProgress()"
+                            class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-emerald-400 font-mono text-xs focus:outline-none focus:border-cyan-400 leading-relaxed" 
+                            placeholder="Comece a digitar aqui..."></textarea>
+                    </div>
+
+                    <div id="dictation-status" class="text-xs text-slate-400 min-h-[18px]"></div>
+
+                    <button onclick="verifyExtendedDictation()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-emerald-950/40">
+                        <i class="fa-solid fa-check-double mr-1.5"></i> Validar Digitação e Concluir Módulo
+                    </button>
+                </div>
+            `;
+        }
+
+        function preventPaste(e) {
+            e.preventDefault();
+            const statusEl = document.getElementById('dictation-status');
+            statusEl.className = "text-xs font-semibold text-rose-400";
+            statusEl.innerText = "Ação bloqueada! Colar (Ctrl+V) não é permitido neste teste. Digite caractere por caractere.";
+        }
+
+        function updateDictationProgress() {
+            const typed = document.getElementById('dictation-input').value;
+            const counter = document.getElementById('char-counter');
+            const statusEl = document.getElementById('dictation-status');
+
+            counter.innerText = `${typed.length} / ${targetExtendedDictation.length} caracteres`;
+
+            if (targetExtendedDictation.startsWith(typed)) {
+                statusEl.className = "text-xs font-semibold text-emerald-400";
+                statusEl.innerText = "Digitação correta até o momento! Continue...";
+            } else {
+                statusEl.className = "text-xs font-semibold text-amber-400";
+                statusEl.innerText = "Atenção: Há um erro na pontuação, espaço ou acentuação digitada recente.";
+            }
+        }
+
+        function verifyExtendedDictation() {
+            const userText = document.getElementById('dictation-input').value.trim();
+            if (userText === targetExtendedDictation) {
+                finishModule();
+            } else {
+                alert("O texto digitado não confere 100% com o modelo. Verifique acentos, parênteses, maiúsculas/minúsculas e espaços.");
             }
         }
 
@@ -300,19 +412,10 @@
             totalXP += 25;
             document.getElementById('xp-counter').innerText = `${totalXP} XP`;
             document.getElementById('step-feedback').className = "text-xs font-semibold flex items-center gap-1.5 text-emerald-400";
-            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-check"></i> Desafio validado! Clique em Próximo Tópico.`;
+            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-check"></i> Etapa validada! Clique em Próxima Etapa.`;
             document.getElementById('next-btn').disabled = false;
         }
 
-        async function nextTestStep() {
-            if (currentStepIndex < LESSON_STEPS.length - 1) {
-                currentStepIndex++;
-                renderStep(currentStepIndex);
-            } else {
-                finishModule();
-            }
-        }
-        
         async function nextStep() {
             if (currentStepIndex < LESSON_STEPS.length - 1) {
                 currentStepIndex++;
@@ -325,6 +428,13 @@
         async function finishModule() {
             if (timerInterval) clearInterval(timerInterval);
             document.getElementById('top-progress-bar').style.width = `100%`;
+
+            const timeStr = document.getElementById('timer-display').innerText;
+            totalXP = Math.max(totalXP, 100);
+
+            document.getElementById('res-name').innerText = currentStudent ? currentStudent.nome : "Aluno Visitante";
+            document.getElementById('res-time').innerText = timeStr;
+            document.getElementById('res-xp').innerText = `${totalXP} XP`;
 
             if (currentStudent && currentStudent.id) {
                 await _supabase.from('se_progresso').upsert({
