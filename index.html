@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Cultura Digital - Plataforma de Simuladores</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col">
+
+  <!-- CONEXÃO SUPABASE -->
+  <script>
+    const SUPABASE_URL = "https://pnybenlfazdjgqnyuypn.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_2pzNR2UAF2-jfiXQDqrA3w_lwFryik0";
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentStudent = null;
+  </script>
+
+  <!-- NAVBAR -->
+  <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex justify-between items-center shadow-lg">
+    <div class="flex items-center space-x-3">
+      <i class="fa-solid fa-laptop-code text-cyan-400 text-2xl"></i>
+      <h1 class="text-xl font-bold tracking-wide">Cultura Digital <span class="text-xs px-2 py-0.5 bg-cyan-500/20 text-cyan-400 rounded-full border border-cyan-500/30">Ambiente Virtual</span></h1>
+    </div>
+    <div id="userInfoHeader" class="hidden flex items-center space-x-4">
+      <span class="text-sm text-slate-300"><i class="fa-solid fa-user-circle text-cyan-400 mr-2"></i><b id="studentName"></b> (<span id="studentClass"></span>)</span>
+      <button onclick="logout()" class="text-xs bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white px-3 py-1.5 rounded border border-red-500/30 transition">Sair</button>
+    </div>
+  </header>
+
+  <main class="flex-1 p-6 max-w-7xl mx-auto w-full">
+
+    <!-- TELA DE AUTENTICAÇÃO (LOGIN / REGISTRO / PROFESSOR) -->
+    <div id="authScreen" class="max-w-md mx-auto bg-slate-800 p-8 rounded-xl border border-slate-700 shadow-2xl mt-10">
+      <div class="flex justify-between border-b border-slate-700 mb-6 text-sm">
+        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="pb-3 px-2 font-semibold border-b-2 border-cyan-400 text-cyan-400">Aluno Login</button>
+        <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="pb-3 px-2 font-semibold text-slate-400 hover:text-slate-200">Novo Cadastro</button>
+        <button id="tabTeacherBtn" onclick="switchAuthTab('teacher')" class="pb-3 px-2 font-semibold text-slate-400 hover:text-slate-200">Professor</button>
+      </div>
+
+      <!-- FORM LOGIN ALUNO -->
+      <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Nome de Usuário</label>
+          <input type="text" id="loginUser" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-cyan-400">
+        </div>
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Senha</label>
+          <input type="password" id="loginPass" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-cyan-400">
+        </div>
+        <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 font-bold py-2.5 rounded transition shadow-lg shadow-cyan-900/40">Entrar na Plataforma</button>
+      </form>
+
+      <!-- FORM CADASTRO ALUNO -->
+      <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Nome Completo</label>
+          <input type="text" id="regName" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-cyan-400">
+        </div>
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Turma / Ano</label>
+          <input type="text" id="regClass" placeholder="Ex: 8º Ano A" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-cyan-400">
+        </div>
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Nome de Usuário</label>
+          <input type="text" id="regUser" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-cyan-400">
+        </div>
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Senha</label>
+          <input type="password" id="regPass" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-cyan-400">
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 font-bold py-2.5 rounded transition shadow-lg shadow-emerald-900/40">Solicitar Acesso</button>
+      </form>
+
+      <!-- LOGIN PROFESSOR -->
+      <form id="formTeacher" onsubmit="handleTeacherLogin(event)" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Chave de Acesso do Professor</label>
+          <input type="password" id="teacherKey" placeholder="Chave de acesso" required class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white focus:outline-none focus:border-purple-400">
+        </div>
+        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 font-bold py-2.5 rounded transition shadow-lg shadow-purple-900/40">Acessar Painel de Controle</button>
+      </form>
+
+      <p id="authMsg" class="mt-4 text-center text-sm font-semibold text-amber-400 min-h-[20px]"></p>
+    </div>
+
+    <!-- HUB DE LIÇÕES DO ALUNO -->
+    <div id="studentHubScreen" class="hidden space-y-6">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+        <h2 class="text-2xl font-bold text-white flex items-center"><i class="fa-solid fa-list-check text-cyan-400 mr-3"></i> Lições e Simuladores Práticos</h2>
+        <button onclick="loadStudentHub()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs px-3 py-2 rounded text-slate-300"><i class="fa-solid fa-rotate mr-1"></i> Atualizar Lista</button>
+      </div>
+      <div id="modulesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Lições carregadas do Supabase em tempo real -->
+      </div>
+    </div>
+
+    <!-- PAINEL DE GESTÃO DO PROFESSOR -->
+    <div id="teacherDashboardScreen" class="hidden space-y-8">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+        <h2 class="text-2xl font-bold text-white flex items-center"><i class="fa-solid fa-chalkboard-user text-purple-400 mr-3"></i> Painel de Gestão e Monitoramento</h2>
+        <button onclick="loadTeacherData()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs px-3 py-2 rounded text-slate-300"><i class="fa-solid fa-rotate mr-1"></i> Atualizar Dados</button>
+      </div>
+
+      <!-- ALUNOS AGUARDANDO AUTORIZAÇÃO -->
+      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
+        <h3 class="text-lg font-bold text-amber-400 flex items-center"><i class="fa-solid fa-user-clock mr-2"></i> Solicitações de Acesso Pendentes</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+              <tr>
+                <th class="p-3">Nome</th>
+                <th class="p-3">Turma</th>
+                <th class="p-3">Usuário</th>
+                <th class="p-3">Data</th>
+                <th class="p-3">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="pendingStudentsTable" class="divide-y divide-slate-700"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PROGRESSO EM TEMPO REAL -->
+      <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg space-y-4">
+        <h3 class="text-lg font-bold text-cyan-400 flex items-center"><i class="fa-solid fa-chart-line mr-2"></i> Acompanhamento das Atividades dos Alunos</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-900 text-slate-400 uppercase text-xs">
+              <tr>
+                <th class="p-3">Aluno</th>
+                <th class="p-3">Turma</th>
+                <th class="p-3">Módulo / Lição</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Etapa</th>
+                <th class="p-3">Tempo Gasto</th>
+                <th class="p-3">Último Acesso</th>
+              </tr>
+            </thead>
+            <tbody id="progressTable" class="divide-y divide-slate-700"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function switchAuthTab(tab) {
+      document.getElementById('formLogin').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('formRegister').classList.toggle('hidden', tab !== 'register');
+      document.getElementById('formTeacher').classList.toggle('hidden', tab !== 'teacher');
+      
+      document.getElementById('tabLoginBtn').className = tab === 'login' ? 'pb-3 px-2 font-semibold border-b-2 border-cyan-400 text-cyan-400' : 'pb-3 px-2 font-semibold text-slate-400';
+      document.getElementById('tabRegisterBtn').className = tab === 'register' ? 'pb-3 px-2 font-semibold border-b-2 border-cyan-400 text-cyan-400' : 'pb-3 px-2 font-semibold text-slate-400';
+      document.getElementById('tabTeacherBtn').className = tab === 'teacher' ? 'pb-3 px-2 font-semibold border-b-2 border-purple-400 text-purple-400' : 'pb-3 px-2 font-semibold text-slate-400';
+      document.getElementById('authMsg').innerText = '';
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const nome = document.getElementById('regName').value;
+      const turma = document.getElementById('regClass').value;
+      const usuario = document.getElementById('regUser').value;
+      const senha = document.getElementById('regPass').value;
+
+      const { error } = await _supabase.from('se_alunos').insert([{ nome, turma, usuario, senha, autorizado: false }]);
+      if (error) {
+        document.getElementById('authMsg').className = "mt-4 text-center text-sm font-semibold text-red-400";
+        document.getElementById('authMsg').innerText = "Erro ao cadastrar. O nome de usuário pode já estar em uso.";
+      } else {
+        document.getElementById('authMsg').className = "mt-4 text-center text-sm font-semibold text-emerald-400";
+        document.getElementById('authMsg').innerText = "Solicitação enviada! Aguarde a autorização do professor.";
+        e.target.reset();
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const usuario = document.getElementById('loginUser').value;
+      const senha = document.getElementById('loginPass').value;
+
+      const { data, error } = await _supabase.from('se_alunos').select('*').eq('usuario', usuario).eq('senha', senha).single();
+
+      if (error || !data) {
+        document.getElementById('authMsg').className = "mt-4 text-center text-sm font-semibold text-red-400";
+        document.getElementById('authMsg').innerText = "Usuário ou senha incorretos.";
+        return;
+      }
+
+      if (!data.autorizado) {
+        document.getElementById('authMsg').className = "mt-4 text-center text-sm font-semibold text-amber-400";
+        document.getElementById('authMsg').innerText = "Seu cadastro ainda não foi aprovado pelo professor.";
+        return;
+      }
+
+      currentStudent = data;
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('userInfoHeader').classList.remove('hidden');
+      document.getElementById('studentName').innerText = currentStudent.nome;
+      document.getElementById('studentClass').innerText = currentStudent.turma;
+      
+      loadStudentHub();
+    }
+
+    async function handleTeacherLogin(e) {
+      e.preventDefault();
+      const key = document.getElementById('teacherKey').value;
+      if (key === "admin123") { // Altere a sua senha do professor aqui
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('teacherDashboardScreen').classList.remove('hidden');
+        loadTeacherData();
+      } else {
+        document.getElementById('authMsg').className = "mt-4 text-center text-sm font-semibold text-red-400";
+        document.getElementById('authMsg').innerText = "Chave do professor incorreta.";
+      }
+    }
+
+    function logout() {
+      currentStudent = null;
+      document.getElementById('authScreen').classList.remove('hidden');
+      document.getElementById('studentHubScreen').classList.add('hidden');
+      document.getElementById('teacherDashboardScreen').classList.add('hidden');
+      document.getElementById('userInfoHeader').classList.add('hidden');
+    }
+
+    async function loadStudentHub() {
+      document.getElementById('studentHubScreen').classList.remove('hidden');
+      const { data: modulos } = await _supabase.from('se_modulos').select('*').order('ordem');
+      const { data: progresso } = await _supabase.from('se_progresso').select('*').eq('aluno_id', currentStudent.id);
+
+      const listContainer = document.getElementById('modulesList');
+      listContainer.innerHTML = '';
+
+      modulos.forEach(mod => {
+        const p = progresso ? progresso.find(item => item.modulo_id === mod.id) : null;
+        const status = p ? p.status : 'Nao iniciado';
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-800 border border-slate-700 p-6 rounded-xl flex flex-col justify-between shadow-lg hover:border-cyan-500/50 transition";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start mb-3">
+              <h3 class="font-bold text-lg text-white">${mod.titulo}</h3>
+              <span class="text-xs px-2 py-0.5 rounded font-bold ${status === 'concluido' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}">${status.toUpperCase()}</span>
+            </div>
+            <p class="text-sm text-slate-400 mb-4">${mod.descricao || 'Exercício prático de simulação virtual.'}</p>
+          </div>
+          <div class="flex justify-between items-center pt-4 border-t border-slate-700/60">
+            <span class="text-xs text-slate-400">Etapa: ${p ? p.etapa_atual : 0}</span>
+            <button onclick="openLesson('${mod.id}')" class="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs px-4 py-2 rounded transition">
+              ${status === 'Nao iniciado' ? 'Iniciar Lição' : 'Continuar'}
+            </button>
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    function openLesson(moduleId) {
+      // Guarda sessão e redireciona para a lição específica
+      sessionStorage.setItem('active_student', JSON.stringify(currentStudent));
+      window.location.href = `licoes/${moduleId}.html`;
+    }
+
+    async function loadTeacherData() {
+      // 1. Carregar Pedidos de Acesso Pendentes
+      const { data: pendentes } = await _supabase.from('se_alunos').select('*').eq('autorizado', false);
+      const pendTable = document.getElementById('pendingStudentsTable');
+      pendTable.innerHTML = '';
+
+      if (!pendentes || pendentes.length === 0) {
+        pendTable.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-slate-500">Nenhuma solicitação pendente.</td></tr>`;
+      } else {
+        pendentes.forEach(aluno => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="p-3 font-semibold text-white">${aluno.nome}</td>
+            <td class="p-3 text-slate-300">${aluno.turma}</td>
+            <td class="p-3 font-mono text-cyan-400">${aluno.usuario}</td>
+            <td class="p-3 text-xs text-slate-400">${new Date(aluno.created_at).toLocaleDateString('pt-BR')}</td>
+            <td class="p-3">
+              <button onclick="approveStudent('${aluno.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-1 rounded font-bold transition">Autorizar</button>
+            </td>
+          `;
+          pendTable.appendChild(row);
+        });
+      }
+
+      // 2. Carregar Relatório de Progresso dos Alunos
+      const { data: progressos } = await _supabase.from('se_progresso').select('*, se_alunos(nome, turma), se_modulos(titulo)').order('updated_at', { ascending: false });
+      const progTable = document.getElementById('progressTable');
+      progTable.innerHTML = '';
+
+      if (!progressos || progressos.length === 0) {
+        progTable.innerHTML = `<tr><td colspan="7" class="p-3 text-center text-slate-500">Nenhum progresso registrado até o momento.</td></tr>`;
+      } else {
+        progressos.forEach(p => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="p-3 font-semibold text-white">${p.se_alunos ? p.se_alunos.nome : 'Desconhecido'}</td>
+            <td class="p-3 text-slate-300">${p.se_alunos ? p.se_alunos.turma : '-'}</td>
+            <td class="p-3 text-slate-200">${p.se_modulos ? p.se_modulos.titulo : p.modulo_id}</td>
+            <td class="p-3"><span class="text-xs px-2 py-0.5 rounded font-bold ${p.status === 'concluido' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">${p.status}</span></td>
+            <td class="p-3">${p.etapa_atual} / ${p.total_etapas || 5}</td>
+            <td class="p-3 font-mono">${Math.floor((p.tempo_segundos || 0) / 60)}m ${(p.tempo_segundos || 0) % 60}s</td>
+            <td class="p-3 text-xs text-slate-400">${new Date(p.updated_at).toLocaleString('pt-BR')}</td>
+          `;
+          progTable.appendChild(row);
+        });
+      }
+    }
+
+    async function approveStudent(studentId) {
+      await _supabase.from('se_alunos').update({ autorizado: true }).eq('id', studentId);
+      loadTeacherData();
+    }
+  </script>
+</body>
+</html>
