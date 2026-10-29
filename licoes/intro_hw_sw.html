@@ -30,7 +30,6 @@
         const TOTAL_STEPS = 4;
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Captura os dados passados via parâmetros de URL pelo index.html
             const urlParams = new URLSearchParams(window.location.search);
             const urlId = urlParams.get('id');
             const urlNome = urlParams.get('nome');
@@ -46,13 +45,15 @@
                 }
             }
 
-            if (currentStudent && currentStudent.nome) {
-                document.getElementById('student-name-display').innerText = currentStudent.nome;
-                document.getElementById('student-class-display').innerText = currentStudent.turma;
-            } else {
-                document.getElementById('student-name-display').innerText = "Aluno Visitante";
-                document.getElementById('student-class-display').innerText = "Geral";
+            // TRAVA DE SEGURANÇA: Se não estiver autenticado, redireciona para o portal
+            if (!currentStudent || !currentStudent.id || !currentStudent.nome) {
+                alert("Você precisa se identificar no Portal Principal antes de iniciar as lições!");
+                window.location.href = "../index.html";
+                return;
             }
+
+            document.getElementById('student-name-display').innerText = currentStudent.nome;
+            document.getElementById('student-class-display').innerText = currentStudent.turma;
         });
     </script>
 
