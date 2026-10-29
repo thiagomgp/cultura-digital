@@ -27,13 +27,14 @@
 
         let activeStudent = null;
 
+        // IDs e caminhos atualizados exatamente conforme os ficheiros da pasta licoes/
         const MODULES = [
-            { id: "hardware_software", num: 1, title: "1. Hardware, Software e Licenças CC/GPL", desc: "Conceitos básicos de computadores, peças, programas e licenciamento de software livre.", file: "licoes/hardware_software.html", totalSteps: 4 },
+            { id: "intro_hw_sw", num: 1, title: "1. Hardware, Software e Licenças CC/GPL", desc: "Conceitos básicos de computadores, peças, programas e licenciamento de software livre.", file: "licoes/intro_hw_sw.html", totalSteps: 4 },
             { id: "teclado_atalhos", num: 2, title: "2. Teclado: Funções, Acentuação e Atalhos", desc: "Manipulação do teclado, acentuação, caracteres especiais e atalhos vitais (Ctrl+C/V/Z).", file: "licoes/teclado_atalhos.html", totalSteps: 4 },
-            { id: "navegadores_pesquisa", num: 3, title: "3. Navegadores e Pesquisa Inteligente na Web", desc: "Barra de endereço, escolha de navegadores e técnicas de busca avançada no Google.", file: "licoes/navegadores_pesquisa.html", totalSteps: 4 },
-            { id: "gestao_arquivos", num: 4, title: "4. Gestão de Arquivos, Pastas e Dispositivos USB", desc: "Hierarquia no HD, organização de documentos e ejeção segura de mídias USB.", file: "licoes/gestao_arquivos.html", totalSteps: 4 },
-            { id: "seguranca_digital", num: 5, title: "5. Segurança Digital, Senhas e Nuvem", desc: "Criação de senhas fortes, proteção contra phishing e uso do Google Drive.", file: "licoes/seguranca_digital.html", totalSteps: 4 },
-            { id: "copiar_colar_cmd", num: 6, title: "6. Copiar, Colar & Manutenção via CMD", desc: "Uso prático de terminal, comandos do Diskpart e preparação de discos.", file: "licoes/copiar_colar_cmd.html", totalSteps: 4 },
+            { id: "navegadores_busca", num: 3, title: "3. Navegadores e Pesquisa Inteligente na Web", desc: "Barra de endereço, escolha de navegadores e técnicas de busca avançada no Google.", file: "licoes/navegadores_busca.html", totalSteps: 4 },
+            { id: "arquivos_pastas", num: 4, title: "4. Gestão de Arquivos, Pastas e Dispositivos USB", desc: "Hierarquia no HD, organização de documentos e ejeção segura de mídias USB.", file: "licoes/arquivos_pastas.html", totalSteps: 4 },
+            { id: "seguranca_nuvem", num: 5, title: "5. Segurança Digital, Senhas e Nuvem", desc: "Criação de senhas fortes, proteção contra phishing e uso do Google Drive.", file: "licoes/seguranca_nuvem.html", totalSteps: 4 },
+            { id: "diskpart", num: 6, title: "6. Copiar, Colar & Manutenção via CMD", desc: "Uso prático de terminal, comandos do Diskpart e preparação de discos.", file: "licoes/diskpart.html", totalSteps: 4 },
             { id: "hardware_montagem", num: 7, title: "7. Montagem e Desmontagem de Hardware", desc: "Estudo prático da arquitetura interna do PC, peças físicas e manuseio seguro.", file: "licoes/hardware_montagem.html", totalSteps: 4 }
         ];
 
@@ -59,7 +60,6 @@
                 return;
             }
 
-            // Busca ou cadastra no Supabase
             try {
                 let { data: existing, error } = await _supabase
                     .from('alunos')
