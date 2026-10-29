@@ -27,7 +27,6 @@
 
         let activeStudent = null;
 
-        // IDs e caminhos atualizados exatamente conforme os ficheiros da pasta licoes/
         const MODULES = [
             { id: "intro_hw_sw", num: 1, title: "1. Hardware, Software e Licenças CC/GPL", desc: "Conceitos básicos de computadores, peças, programas e licenciamento de software livre.", file: "licoes/intro_hw_sw.html", totalSteps: 4 },
             { id: "teclado_atalhos", num: 2, title: "2. Teclado: Funções, Acentuação e Atalhos", desc: "Manipulação do teclado, acentuação, caracteres especiais e atalhos vitais (Ctrl+C/V/Z).", file: "licoes/teclado_atalhos.html", totalSteps: 4 },
@@ -144,6 +143,12 @@
                     badgeHTML = `<span class="bg-cyan-500/20 text-cyan-400 font-bold px-2.5 py-1 rounded-md text-xs border border-cyan-500/30">EM ANDAMENTO</span>`;
                 }
 
+                // Cria o link passando os dados do aluno ativo via parâmetros de URL para evitar perda de sessão nas subpastas do GitHub Pages
+                let lessonURL = mod.file;
+                if (activeStudent && activeStudent.id) {
+                    lessonURL += `?id=${activeStudent.id}&nome=${encodeURIComponent(activeStudent.nome)}&turma=${encodeURIComponent(activeStudent.turma)}`;
+                }
+
                 const card = document.createElement('div');
                 card.className = "bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 rounded-2xl p-5 flex flex-col justify-between shadow-xl transition-all duration-300 hover:-translate-y-1";
                 card.innerHTML = `
@@ -160,7 +165,7 @@
                         <div class="text-xs text-slate-300">
                             <span class="text-slate-400">Etapa:</span> <strong class="text-cyan-400">${step}</strong> / ${mod.totalSteps}
                         </div>
-                        <a href="${mod.file}" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-lg shadow-cyan-500/10">
+                        <a href="${lessonURL}" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5 shadow-lg shadow-cyan-500/10">
                             <span>${isStarted ? 'Continuar' : 'Iniciar Lição'}</span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
