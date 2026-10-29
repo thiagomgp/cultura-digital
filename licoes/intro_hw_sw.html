@@ -94,7 +94,6 @@
                 <span id="step-badge" class="text-xs bg-slate-700 text-slate-300 font-medium px-2 py-1 rounded-md">Fundamentação</span>
             </div>
 
-            <!-- Conteúdo rico em texto formatado -->
             <div class="p-5 flex-1 overflow-y-auto space-y-4 text-slate-300 text-xs sm:text-sm leading-relaxed" id="step-content"></div>
 
             <div class="p-4 bg-slate-800 border-t border-slate-700 flex items-center justify-between gap-3">
@@ -136,7 +135,6 @@
     </div>
 
     <script>
-        // --- ESTRUTURA COM TEORIA APROFUNDADA E ITENS CORRIGIDOS ---
         const LESSON_STEPS = [
             {
                 id: 1,
@@ -144,18 +142,16 @@
                 badge: "Teoria & Análise",
                 content: `
                     <p class="font-semibold text-white">1. A Base Física (Hardware):</p>
-                    <p>O hardware engloba todo o substrato tangível de um sistema computacional. Isso inclui semicondutores, circuitos integrados, barramentos de dados, unidades de armazenamento magnético/estado sólido e dispositivos eletromecânicos. Sem energia elétrica e eletromagnetismo, o hardware é inertemente inútil.</p>
-                    
+                    <p>O hardware engloba todo o substrato tangível de um sistema computacional. Isso inclui semicondutores, circuitos integrados, barramentos de dados, unidades de armazenamento magnético/estado sólido e dispositivos eletromecânicos.</p>
                     <p class="font-semibold text-white mt-2">2. A Camada Lógica (Software):</p>
-                    <p>O software consiste em sequências estruturadas de instruções lógicas compiladas ou interpretadas que dizem ao hardware exatamente quais operações executar. Divide-se em <em>Software de Sistema</em> (Kernels, drivers, utilitários de baixo nível) e <em>Software de Aplicação</em> (navegadores, editores, pacotes de escritório).</p>
-
+                    <p>O software consiste em sequências estruturadas de instruções lógicas compiladas ou interpretadas que dizem ao hardware exatamente quais operações executar.</p>
                     <p class="font-semibold text-white mt-2">3. O Elo Intermediário (Firmware):</p>
-                    <p>Gravado diretamente em chips de memória não volátil (como ROM, EEPROM ou Flash) na placa-mãe, o firmware atua como a rotina inicial de inicialização (POST/UEFI), fazendo a ponte de baixo nível entre o silício bruto e o sistema operacional.</p>
+                    <p>Gravado diretamente em chips de memória não volátil (como ROM ou Flash) na placa-mãe, atua como rotina inicial de inicialização (POST/UEFI).</p>
                 `,
                 xp: 25,
                 items: [
                     { name: "Controlador de barramento PCIe na Placa-Mãe", answer: "Hardware", options: ["Hardware", "Software"] },
-                    { name: "Rotina de inicialização gravada na memória Flash (UEFI)", answer: "Software", options: ["Hardware", "Software"] },
+                    { name: "Rotina de inicialização gravada na memória Flash (UEFI)", answer: "Hardware", options: ["Hardware", "Software"] },
                     { name: "Interpretador de comandos (Shell / Bash)", answer: "Software", options: ["Hardware", "Software"] },
                     { name: "Módulo de Driver de Vídeo proprietário", answer: "Software", options: ["Hardware", "Software"] }
                 ]
@@ -166,13 +162,11 @@
                 badge: "Fluxo de Informação",
                 content: `
                     <p class="font-semibold text-white">O Princípio de Entrada e Saída (I/O):</p>
-                    <p>Computadores operam processando fluxos de dados binários. Para interagir com o operador humano e com o ambiente externo, utilizam-se canais denominados <strong>periféricos</strong>.</p>
-                    
+                    <p>Computadores operam processando fluxos de dados binários através de canais denominados periféricos.</p>
                     <p class="font-semibold text-white mt-2">Dispositivos de Entrada (Input):</p>
-                    <p>Capturam estímulos físicos do mundo exterior (mecânicos, ópticos, acústicos ou térmicos) e os convertem em sinais elétricos interpretáveis pela CPU (ex: teclados matriciais, sensores ópticos, digitalizadores).</p>
-
+                    <p>Capturam estímulos físicos do mundo exterior e os convertem em sinais elétricos.</p>
                     <p class="font-semibold text-white mt-2">Dispositivos de Saída (Output):</p>
-                    <p>Traduzem o processamento lógico interno da máquina em formas perceptíveis aos sentidos humanos ou acionamentos industriais (ex: matrizes de pixels em telas LCD/OLED, transdutores eletroacústicos).</p>
+                    <p>Traduzem o processamento lógico interno em formas perceptíveis aos sentidos humanos.</p>
                 `,
                 xp: 25,
                 items: [
@@ -187,14 +181,10 @@
                 title: "Filosofia do Conhecimento Aberto: Licenças CC & GPL",
                 badge: "Ética e Legislação",
                 content: `
-                    <p class="font-semibold text-white">O Monopólio do Copyright vs. Copyleft:</p>
-                    <p>Historicamente, a legislação de direitos autorais restringe a cópia e modificação. No entanto, na cultura digital moderna, modelos colaborativos emergiram para garantir o compartilhamento legal e a inovação aberta.</p>
-                    
-                    <p class="font-semibold text-white mt-2">Creative Commons (CC):</p>
-                    <p>Criada primariamente para produções intelectuais, artísticas, literárias e científicas (textos, imagens, multimídia). Permite que o autor especifique permissões granulares (ex: uso comercial, obras derivadas) mantendo a autoria.</p>
-
+                    <p class="font-semibold text-white">Creative Commons (CC):</p>
+                    <p>Criada para produções intelectuais, artísticas e científicas, permitindo permissões granulares.</p>
                     <p class="font-semibold text-white mt-2">GNU General Public License (GPL):</p>
-                    <p>Focada estritamente em código-fonte de software. Utiliza o conceito de <em>Copyleft</em>: garante a liberdade absoluta de executar, estudar, modificar e redistribuir o programa, desde que todas as versões derivadas permaneçam obrigatoriamente sob a mesma licença aberta.</p>
+                    <p>Focada em código-fonte de software, utilizando o conceito de Copyleft para garantir liberdades absolutas.</p>
                 `,
                 xp: 25,
                 items: [
@@ -209,8 +199,7 @@
                 badge: "Avaliação Técnica",
                 content: `
                     <p class="font-semibold text-white">Consolidação Final:</p>
-                    <p>A habilidade de distinguir com precisão a natureza dos componentes de um sistema computacional e seus respectivos marcos legais de licenciamento é pré-requisito obrigatório para qualquer profissional de tecnologia e suporte em infraestrutura.</p>
-                    <p>Responda à questão final de auditoria para certificar seu desempenho neste módulo.</p>
+                    <p>A habilidade de distinguir com precisão a natureza dos componentes de um sistema computacional é pré-requisito obrigatório.</p>
                 `,
                 xp: 25,
                 items: [
@@ -247,7 +236,7 @@
             document.getElementById('step-badge').innerText = step.badge;
             document.getElementById('step-content').innerHTML = step.content;
 
-            const progressPercent = ((index) / LESSON_STEPS.length) * 100;
+            const progressPercent = (index / LESSON_STEPS.length) * 100;
             document.getElementById('top-progress-bar').style.width = `${progressPercent}%`;
 
             document.getElementById('next-btn').disabled = true;
@@ -274,7 +263,6 @@
             }
 
             const currentItem = step.items[currentItemIndex];
-            
             let buttonsHTML = currentItem.options.map(opt => `
                 <button onclick="verifyAnswer('${opt}', '${currentItem.answer}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-sm transition">
                     ${opt}
