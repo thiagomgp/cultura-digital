@@ -269,7 +269,7 @@
             document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-info"></i> Responda aos itens analíticos ao lado.`;
 
             loadCurrentItem();
-            gressToSupabase(index);
+            saveProgressToSupabase(index);
         }
 
         function loadCurrentItem() {
@@ -326,7 +326,7 @@
             document.getElementById('step-feedback').className = "text-xs font-medium flex items-center gap-1.5 text-emerald-400";
             document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-check"></i> Desafio concluído! Clique ao lado para avançar.`;
             
-            gressToSupabase(currentStepIndex + 1);
+            saveProgressToSupabase(currentStepIndex + 1);
         }
 
         async function nextStep() {
@@ -337,7 +337,7 @@
                 clearInterval(timerInterval);
                 document.getElementById('top-progress-bar').style.width = '100%';
                 document.getElementById('completion-modal').classList.remove('hidden');
-                await gressToSupabase(TOTAL_STEPS);
+                await saveProgressToSupabase(TOTAL_STEPS);
             }
         }
 
