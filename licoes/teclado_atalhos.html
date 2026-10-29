@@ -142,10 +142,10 @@
                 badge: "Teoria & Análise",
                 content: `
                     <p class="font-semibold text-white">1. Blocos Funcionais:</p>
-                    <p>O teclado de computador moderno divide-se em zonas lógicas distintas: o <em>Bloco Alfanumérico</em> (centro), as <em>Teclas de Função (F1 a F12)</em> no topo, o <em>Bloco de Navegação</em> (Setas, Insert, Delete, Home, End, Page Up/Down) e o <em>Teclado Numérico Lateral</em> (Numpad).</p>
+                    <p>O teclado de computador moderno divide-se em zonas lógicas distintas: o Bloco Alfanumérico (centro), as Teclas de Função (F1 a F12) no topo, o Bloco de Navegação (Setas, Insert, Delete, Home, End, Page Up/Down) e o Teclado Numérico Lateral (Numpad).</p>
                     
                     <p class="font-semibold text-white mt-2">2. Teclas Modificadoras:</p>
-                    <p>Teclas como <strong>Shift</strong>, <strong>Ctrl (Control)</strong>, <strong>Alt</strong> e <strong>Win (Super)</strong> não geram caracteres isolados por si só; elas modificam o comportamento funcional de outras teclas acionadas simultaneamente, permitindo o acesso a caracteres secundários e comandos avançados do sistema operacional.</p>
+                    <p>Teclas como Shift, Ctrl (Control), Alt e Win (Super) não geram caracteres isolados por si só; elas modificam o comportamento funcional de outras teclas acionadas simultaneamente, permitindo o acesso a caracteres secundários e comandos avançados do sistema operacional.</p>
                 `,
                 xp: 25,
                 items: [
@@ -160,10 +160,10 @@
                 badge: "Sintaxe & Ortografia",
                 content: `
                     <p class="font-semibold text-white">O Mecanismo de Teclas Mortas (Dead Keys):</p>
-                    <p>Em teclados configurados no padrão brasileiro (ABNT2), os acentos gráficos (agudo ´, circunflexo ˆ, crase `, til ˜) operam como <em>teclas mortas</em>. Ao pressioná-las, o cursor não avança imediatamente; o sistema aguarda a próxima letra para combiná-los num único caractere acentuado.</p>
+                    <p>Em teclados configurados no padrão brasileiro (ABNT2), os acentos gráficos (agudo, circunflexo, crase, til) operam como teclas mortas. Ao pressioná-las, o cursor não avança imediatamente; o sistema aguarda a próxima letra para combiná-los num único caractere acentuado.</p>
                     
                     <p class="font-semibold text-white mt-2">Simbologia Terciária (AltGr):</p>
-                    <p>Teclas que exibem três símbolos (como a tecla 2, que mostra @ no topo) exigem o uso da tecla <strong>AltGr</strong> (Alt da direita) para acionar o terceiro caractere impresso no canto inferior direito da tecla.</p>
+                    <p>Teclas que exibem três símbolos exigem o uso da tecla AltGr (Alt da direita) para acionar o terceiro caractere impresso no canto inferior direito da tecla.</p>
                 `,
                 xp: 25,
                 items: [
@@ -178,14 +178,14 @@
                 badge: "Eficiência Operacional",
                 content: `
                     <p class="font-semibold text-white">Agilidade sem Mouse:</p>
-                    <p>O uso intensivo de atalhos de teclado reduz drasticamente o esforço físico (evitando lesões por esforço repetitivo no mouse) e acelera fluxos de trabalho acadêmicos e profissionais.</p>
+                    <p>O uso intensivo de atalhos de teclado reduz drasticamente o esforço físico e acelera fluxos de trabalho acadêmicos e profissionais.</p>
                     
                     <p class="font-semibold text-white mt-2">Atalhos Críticos no Windows:</p>
                     <ul class="list-disc list-inside space-y-1 text-xs mt-1">
-                        <li><strong>Alt + Tab:</strong> Alterna rapidamente entre as janelas abertas.</li>
-                        <li><strong>Ctrl + Z:</strong> Desfaz a última ação realizada.</li>
-                        <li><strong>Win + D:</strong> Minimiza todas as janelas e exibe a Área de Trabalho.</li>
-                        <li><strong>Ctrl + A:</strong> Seleciona todo o conteúdo do documento ou pasta atual.</li>
+                        <li>Alt + Tab: Alterna rapidamente entre as janelas abertas.</li>
+                        <li>Ctrl + Z: Desfaz a última ação realizada.</li>
+                        <li>Win + D: Minimiza todas as janelas e exibe a Área de Trabalho.</li>
+                        <li>Ctrl + A: Seleciona todo o conteúdo do documento ou pasta atual.</li>
                     </ul>
                 `,
                 xp: 25,
@@ -206,7 +206,7 @@
                 `,
                 xp: 25,
                 items: [
-                    { name: "Qual é a função da tecla 'Print Screen' (PrntScrn) ou da combinação Win + Shift + S em sistemas modernos?", answer: "Capturar a tela inteira ou uma seleção de recorte para a área de transferência", options: ["Capturar a tela inteira ou uma seleção de recorte para a área de transferência", "Desligar imediatamente o computador"] }
+                    { name: "Qual é a função da tecla Print Screen (PrntScrn) ou da combinação Win + Shift + S em sistemas modernos?", answer: "Capturar a tela inteira ou uma seleção de recorte para a área de transferência", options: ["Capturar a tela inteira ou uma seleção de recorte para a área de transferência", "Desligar imediatamente o computador"] }
                 ]
             }
         ];
@@ -268,7 +268,7 @@
             const currentItem = step.items[currentItemIndex];
             
             let buttonsHTML = currentItem.options.map(opt => `
-                <button onclick="verifyAnswer('${opt}', '${currentItem.answer}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-xs sm:text-sm transition">
+                <button onclick="verifyAnswer('${opt.replace(/'/g, "\\'")}', '${currentItem.answer.replace(/'/g, "\\'")}')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-center text-slate-200 font-bold text-xs sm:text-sm transition">
                     ${opt}
                 </button>
             `).join('');
@@ -304,6 +304,15 @@
             document.getElementById('next-btn').disabled = false;
         }
 
+        async function nextTestStep() {
+            if (currentStepIndex < LESSON_STEPS.length - 1) {
+                currentStepIndex++;
+                renderStep(currentStepIndex);
+            } else {
+                finishModule();
+            }
+        }
+        
         async function nextStep() {
             if (currentStepIndex < LESSON_STEPS.length - 1) {
                 currentStepIndex++;
