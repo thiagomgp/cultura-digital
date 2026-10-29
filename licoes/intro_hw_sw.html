@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Cultura Digital - Aula 1: Hardware, Software e Licenciamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col justify-between antialiased">
+
+    <script>
+        const SUPABASE_URL = "https://pnybenlfazdjgqnyuypn.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_2pzNR2UAF2-jfiXQDqrA3w_lwFryik0";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let currentStudent = null;
+        const MODULE_ID = "intro_hw_sw";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const saved = sessionStorage.getItem('active_student');
+            if (saved) {
+                currentStudent = JSON.parse(saved);
+                document.getElementById('student-name-display').innerText = currentStudent.nome;
+                document.getElementById('student-class-display').innerText = currentStudent.turma;
+            } else {
+                document.getElementById('student-name-display').innerText = "Aluno Visitante";
+                document.getElementById('student-class-display').innerText = "Geral";
+            }
+        });
+    </script>
+
+    <!-- CABEÇALHO -->
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center space-x-3">
+                    <a href="javascript:history.back()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 p-2.5 rounded-xl font-bold transition">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <div>
+                        <h1 class="font-bold text-lg text-white leading-tight">Cultura Digital <span class="text-xs bg-cyan-500/20 text-cyan-400 font-medium px-2 py-0.5 rounded border border-cyan-500/30">Módulo 1</span></h1>
+                        <p class="text-xs text-slate-400">Hardware, Software e Licenciamento (CC / GPL)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-4 w-full md:w-auto justify-end">
+                <div class="flex items-center gap-2 bg-slate-900/80 border border-slate-700/80 px-3 py-1.5 rounded-lg text-xs text-slate-300">
+                    <i class="fa-solid fa-user-graduate text-cyan-400"></i>
+                    <span id="student-name-display" class="font-bold">--</span>
+                    <span class="text-slate-600">|</span>
+                    <span id="student-class-display" class="text-slate-400">--</span>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-900/80 border border-slate-700/80 px-3 py-1.5 rounded-lg text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-trophy text-amber-400"></i>
+                        <span id="xp-counter">0 XP</span>
+                    </div>
+                    <div class="bg-slate-900/80 border border-slate-700/80 px-3 py-1.5 rounded-lg text-xs font-semibold text-cyan-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock"></i>
+                        <span id="timer-display">00:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-full bg-slate-900 h-1.5">
+            <div id="top-progress-bar" class="bg-gradient-to-r from-cyan-500 to-emerald-400 h-1.5 w-0 transition-all duration-500"></div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- ESQUERDA: INSTRUÇÕES DA ETAPA -->
+        <section class="lg:col-span-5 bg-slate-800 border border-slate-700 rounded-2xl flex flex-col shadow-xl overflow-hidden h-full min-h-[520px]">
+            <div class="p-4 bg-slate-800/90 border-b border-slate-700/80 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Etapa <span id="current-step-num">1</span> de 4</span>
+                    <h2 id="step-title" class="text-lg font-bold text-white">Carregando...</h2>
+                </div>
+                <span id="step-badge" class="text-xs bg-slate-700 text-slate-300 font-medium px-2 py-1 rounded-md">Conceito</span>
+            </div>
+
+            <div class="p-5 flex-1 overflow-y-auto space-y-4 text-slate-300 text-sm leading-relaxed" id="step-content"></div>
+
+            <div class="p-4 bg-slate-800 border-t border-slate-700 flex items-center justify-between gap-3">
+                <div id="step-feedback" class="text-xs font-medium flex items-center gap-1.5 text-slate-400">
+                    <i class="fa-solid fa-circle-info"></i> Selecione as respostas corretas no painel ao lado.
+                </div>
+                <button id="next-btn" onclick="nextStep()" disabled class="disabled:opacity-50 disabled:cursor-not-allowed bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 transition-all">
+                    <span>Próximo Passo</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- DIREITA: PAINEL PRÁTICO DE INTERAÇÃO -->
+        <section class="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden h-full min-h-[520px] p-6">
+            <h3 id="interactive-title" class="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-microchip text-cyan-400"></i>
+                <span>Laboratório de Classificação Virtual</span>
+            </h3>
+            <div id="interactive-container" class="flex-1 flex flex-col justify-center gap-4"></div>
+        </section>
+    </main>
+
+    <!-- MODAL DE CONCLUSÃO -->
+    <div id="completion-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-6 text-center">
+            <div class="w-16 h-16 bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-award"></i>
+            </div>
+            <div>
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Concluído!</span>
+                <h3 class="text-2xl font-extrabold text-white mt-1">Conceitos Fundamentais Dominados</h3>
+                <p class="text-slate-300 text-sm mt-2">Você aprendeu a diferenciar Hardware, Software e reconhecer as licenças livres Creative Commons e GNU/GPL.</p>
+            </div>
+            <button onclick="window.history.back()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl text-sm transition">
+                <i class="fa-solid fa-house mr-2"></i>Voltar ao Portal de Lições
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const LESSON_STEPS = [
+            {
+                id: 1,
+                title: "O que é Hardware vs. Software?",
+                badge: "Fundamentos",
+                content: `
+                    <p class="mb-2">No mundo da tecnologia, dividimos o computador em duas partes essenciais:</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                        <li><strong>Hardware:</strong> Tudo o que é físico, peças e componentes que você pode tocar (ex: Teclado, Monitor, Placa-mãe).</li>
+                        <li><strong>Software:</strong> Os programas, aplicativos e sistemas operacionais que dão vida ao computador (ex: Windows, Navegador, Jogos).</li>
+                    </ul>
+                    <p class="mt-3"><strong>Desafio:</strong> Clique nos itens do painel ao lado e classifique cada um como Hardware ou Software.</p>
+                `,
+                xp: 25,
+                type: 'classify_hw_sw'
+            },
+            {
+                id: 2,
+                title: "O que são Periféricos?",
+                badge: "Periféricos",
+                content: `
+                    <p class="mb-2">Os <strong>Periféricos</strong> são equipamentos de hardware externos conectados ao computador.</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                        <li><strong>Entrada:</strong> Enviam dados para o PC (Teclado, Mouse, Microfone).</li>
+                        <li><strong>Saída:</strong> Recebem dados do PC (Monitor, Caixas de Som, Impressora).</li>
+                    </ul>
+                    <p class="mt-3"><strong>Desafio:</strong> Classifique os periféricos no painel à direita.</p>
+                `,
+                xp: 25,
+                type: 'classify_perifericos'
+            },
+            {
+                id: 3,
+                title: "Licenciamento e Direitos Autorais",
+                badge: "Ética Digital",
+                content: `
+                    <p class="mb-2">Tudo o que criamos na internet (textos, imagens, programas) possui direitos autorais.</p>
+                    <p class="mb-2">Para permitir o compartilhamento legal e gratuito, existem licenças abertas:</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs bg-slate-900/60 p-3 rounded-lg border border-slate-700">
+                        <li><strong>Creative Commons (CC):</strong> Usada para imagens, vídeos e textos artísticos/educacionais.</li>
+                        <li><strong>GNU / GPL:</strong> Licença livre para softwares e códigos de computador.</li>
+                    </ul>
+                    <p class="mt-3"><strong>Desafio:</strong> Associe cada licença ao seu tipo correto de obra.</p>
+                `,
+                xp: 25,
+                type: 'classify_licenses'
+            },
+            {
+                id: 4,
+                title: "Revisão e Validação Final",
+                badge: "Avaliação",
+                content: `
+                    <p class="mb-2">Parabéns por chegar até aqui!</p>
+                    <p class="mb-2">Responda à questão final para validar o aprendizado e registrar seu progresso no sistema.</p>
+                `,
+                xp: 25,
+                type: 'quiz_final'
+            }
+        ];
+
+        let currentStepIndex = 0;
+        let totalXP = 0;
+        let secondsElapsed = 0;
+        let timerInterval = null;
+
+        window.onload = function() {
+            startTimer();
+            renderStep(0);
+        };
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function renderStep(index) {
+            const step = LESSON_STEPS[index];
+            document.getElementById('current-step-num').innerText = step.id;
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-badge').innerText = step.badge;
+            document.getElementById('step-content').innerHTML = step.content;
+
+            const progressPercent = ((index) / LESSON_STEPS.length) * 100;
+            document.getElementById('top-progress-bar').style.width = `${progressPercent}%`;
+
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('step-feedback').className = "text-xs font-medium flex items-center gap-1.5 text-slate-400";
+            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-info"></i> Complete o desafio interativo.`;
+
+            buildInteractivePanel(step.type);
+        }
+
+        function buildInteractivePanel(type) {
+            const container = document.getElementById('interactive-container');
+            container.innerHTML = '';
+
+            if (type === 'classify_hw_sw') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="checkClassify(this, 'hw')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-left transition">
+                            <i class="fa-solid fa-hard-drive text-cyan-400 text-xl mb-2"></i>
+                            <div class="font-bold text-white text-sm">Placa-Mãe</div>
+                            <span class="text-xs text-slate-400">Clique se for Hardware</span>
+                        </button>
+                        <button onclick="checkClassify(this, 'sw')" class="p-4 bg-slate-900 border border-slate-700 hover:border-cyan-500 rounded-xl text-left transition">
+                            <i class="fa-brands fa-windows text-cyan-400 text-xl mb-2"></i>
+                            <div class="font-bold text-white text-sm">Sistema Operacional</div>
+                            <span class="text-xs text-slate-400">Clique se for Software</span>
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Conteúdo dinâmico simplificado para validar
+                container.innerHTML = `
+                    <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-4">
+                        <p class="text-sm text-slate-300">Clique abaixo para confirmar a validação da etapa prática.</p>
+                        <button onclick="unlockNextStep()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-6 py-3 rounded-lg transition">
+                            <i class="fa-solid fa-check mr-2"></i>Validar Conhecimento
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function checkClassify(btn, expected) {
+            btn.classList.add('bg-emerald-950', 'border-emerald-500');
+            unlockNextStep();
+        }
+
+        function unlockNextStep() {
+            totalXP += 25;
+            document.getElementById('xp-counter').innerText = `${totalXP} XP`;
+            document.getElementById('step-feedback').className = "text-xs font-semibold flex items-center gap-1.5 text-emerald-400";
+            document.getElementById('step-feedback').innerHTML = `<i class="fa-solid fa-circle-check"></i> Etapa concluída! Clique em Próximo Passo.`;
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        async function nextStep() {
+            if (currentStepIndex < LESSON_STEPS.length - 1) {
+                currentStepIndex++;
+                renderStep(currentStepIndex);
+            } else {
+                finishModule();
+            }
+        }
+
+        async function finishModule() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('top-progress-bar').style.width = `100%`;
+
+            // Grava o progresso diretamente no Supabase se o aluno estiver logado
+            if (currentStudent && currentStudent.id) {
+                await _supabase.from('se_progresso').upsert({
+                    aluno_id: currentStudent.id,
+                    modulo_id: MODULE_ID,
+                    status: 'concluido',
+                    etapa_atual: 4,
+                    total_etapas: 4,
+                    updated_at: new Date()
+                });
+            }
+
+            document.getElementById('completion-modal').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
